@@ -43,6 +43,8 @@ dependencies:
   flutter_secure_storage: ^8.0.0
   # kakao 로그인을 위한 package
   kakao_flutter_sdk_user: ^1.4.1
+  # API key 관리를 위한 package
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +72,7 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
+    - .env
     - assets/images/logos/
     - assets/images/backgrounds/
     - assets/images/kakao/
