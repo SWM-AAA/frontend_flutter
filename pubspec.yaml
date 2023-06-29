@@ -41,6 +41,8 @@ dependencies:
   # token이나 user data를 Android의 경우 keystore영역에 ios에서는 keychain이라는 내부 저장소에 저장합니다.
   # 시스템만이 접근 가능한 컨테이너에 저장하기에 루팅을 해도 접근이 불가능합니다.
   flutter_secure_storage: ^8.0.0
+  # kakao 로그인을 위한 package
+  kakao_flutter_sdk_user: ^1.4.1
 
 dev_dependencies:
   flutter_test:
