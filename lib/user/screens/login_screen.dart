@@ -15,11 +15,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     void onKakaoLoginButtonClick() {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => const RootTab(),
-        ),
-      );
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => const RootTab(),
+          ),
+          (route) => false);
     }
 
     return DefaultLayout(
