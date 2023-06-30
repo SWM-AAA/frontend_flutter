@@ -92,7 +92,7 @@ class CustomInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 404) {
-      //TODO
+      //TODO <dio.dart> 카카오 계정 없을 때 가입 절차 진행
       print("카카오로 가입한 계정 없음 가입 절차 API 호출해");
       Response successResponse = Response(
           requestOptions: err.response!.requestOptions, statusCode: 200);
@@ -103,8 +103,7 @@ class CustomInterceptor extends Interceptor {
     // zeppy token에 문제있을 시 status code 401 반환
     final refreshToken = await secureStorage.read(key: REFRESH_TOKEN_KEY);
 
-    // TODO
-    // refresh token 없을 때 처리
+    // TODO <dio.dart> refresh token 없을 때 처리
     // kakao accessToken이 유효한지
     // 유효하지 않다면 kakao refreshToken으로 갱신시켜서 보내주고
     // kakao refreshToken의 유효기간이 1달남았다면 refreshToken갱신후 보내주기
