@@ -41,6 +41,16 @@ dependencies:
   # token이나 user data를 Android의 경우 keystore영역에 ios에서는 keychain이라는 내부 저장소에 저장합니다.
   # 시스템만이 접근 가능한 컨테이너에 저장하기에 루팅을 해도 접근이 불가능합니다.
   flutter_secure_storage: ^8.0.0
+  # kakao 로그인을 위한 package
+  kakao_flutter_sdk_user: ^1.4.1
+  # API key 관리를 위한 package
+  flutter_dotenv: ^5.1.0
+  # ---- json_serializble, Retrofit, Riverpod 도입 ----
+  json_annotation: ^4.8.0
+  retrofit: ">=4.0.0 <5.0.0"
+  logger: any #for logging purpose
+  flutter_riverpod: ^2.3.6
+  # ---------------------------------------------------
 
 dev_dependencies:
   flutter_test:
@@ -52,6 +62,9 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  retrofit_generator: ">=5.0.0 <6.0.0"
+  build_runner: ^2.4.6
+  json_serializable: ^6.6.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -68,6 +81,7 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
+    - .env
     - assets/images/logos/
     - assets/images/backgrounds/
     - assets/images/kakao/
