@@ -91,6 +91,15 @@ class CustomInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
+    if (err.response?.statusCode == 404) {
+      //TODO
+      print("카카오로 가입한 계정 없음 가입 절차 API 호출해");
+      Response successResponse = Response(
+          requestOptions: err.response!.requestOptions, statusCode: 200);
+      handler.resolve(successResponse);
+      return;
+    }
+
     // zeppy token에 문제있을 시 status code 401 반환
     final refreshToken = await secureStorage.read(key: REFRESH_TOKEN_KEY);
 

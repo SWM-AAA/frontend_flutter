@@ -3,6 +3,7 @@ import 'dart:io';
 // Kakao Token key (expire - Access Token 12 hours, Refresh Token 2 months
 const KAKAO_ACCESS_TOKEN_KEY = 'KAKAO_ACCESS_TOKEN';
 const KAKAO_REFRESH_TOKEN_KEY = 'KAKAO_REFRESH_TOKEN';
+const KAKAO_REFRESH_TOKEN_EXPIRES_AT_KEY = 'KAKAO_REFRESH_TOKEN_EXPIRES_AT';
 
 // Zeppy Token key
 const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN';

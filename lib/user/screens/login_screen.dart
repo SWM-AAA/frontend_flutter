@@ -2,22 +2,30 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/components/animated_app_title.dart';
+import 'package:frontend/common/consts/data.dart';
+import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
 import 'package:frontend/common/screens/root_tab.dart';
-import 'package:frontend/user/screens/components/kakao_login_button.dart';
+import 'package:frontend/common/secure_storage/secure_storage.dart';
+import 'package:frontend/user/components/kakao_login_button.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
+    final dio = ref.watch(dioProvider);
+    final secureStorage = ref.watch(secureStorageProvider);
+
     void moveToRootTab() {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
@@ -39,8 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (await isKakaoTalkInstalled()) {
         try {
           resp = await UserApi.instance.loginWithKakaoTalk();
-          print(resp);
-          moveToRootTab();
+          // moveToRootTab();
         } catch (error) {
           print('카카오톡으로 로그인 실패1 $error');
 
@@ -53,8 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // 카카오에 연결된 카카오 계정이 없을 때, 카카오 계정 로그인 호출
           try {
             resp = await UserApi.instance.loginWithKakaoAccount();
-            print(resp);
-            moveToRootTab();
+            // moveToRootTab();
           } catch (error) {
             print('카카오 계정으로 로그인 실패2 $error');
             return;
@@ -63,13 +69,35 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         try {
           resp = await UserApi.instance.loginWithKakaoAccount();
-          print(resp);
-          moveToRootTab();
+          // moveToRootTab();
         } catch (error) {
           print('카카오 계정으로 로그인 실패3 $error');
           return;
         }
       }
+
+      await secureStorage.write(
+          key: KAKAO_REFRESH_TOKEN_KEY, value: resp.refreshToken);
+      await secureStorage.write(
+          key: KAKAO_ACCESS_TOKEN_KEY, value: resp.accessToken);
+      await secureStorage.write(
+          key: KAKAO_REFRESH_TOKEN_EXPIRES_AT_KEY,
+          value: resp.refreshTokenExpiresAt.toString());
+
+      try {
+        final user = await UserApi.instance.me();
+        if (user.kakaoAccount?.email != null) {
+          final checkRegisterResp = await dio.post(
+              dotenv.env['AAA_PUBLIC_API_BASE'].toString(),
+              data: {'memberEmail': '${user.kakaoAccount?.email}'});
+          print(checkRegisterResp);
+        } else {
+          throw Exception('email 정보 없음');
+        }
+      } catch (error) {
+        throw Exception('사용자 정보 요청 실패 $error');
+      }
+      moveToRootTab();
     }
 
     void onKakaoLoginButtonClick() {
