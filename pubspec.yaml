@@ -45,6 +45,12 @@ dependencies:
   kakao_flutter_sdk_user: ^1.4.1
   # API key 관리를 위한 package
   flutter_dotenv: ^5.1.0
+  # ---- json_serializble, Retrofit, Riverpod 도입 ----
+  json_annotation: ^4.8.0
+  retrofit: ">=4.0.0 <5.0.0"
+  logger: any #for logging purpose
+  flutter_riverpod: ^2.3.6
+  # ---------------------------------------------------
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +62,9 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  retrofit_generator: ">=5.0.0 <6.0.0"
+  build_runner: ^2.3.3
+  json_serializable: ^6.6.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

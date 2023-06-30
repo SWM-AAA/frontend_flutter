@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/common/components/animated_app_title.dart';
@@ -24,7 +26,12 @@ class _LoginScreenState extends State<LoginScreen> {
           (route) => false);
     }
 
-    void onKakaoLoginButtonClick() async {
+    void processKakaoLogin() async {
+      //REMOVE: 아직 IOS 플랫폼 등록을 하지 않아 임시로 안드로이드에서만 카카오 로그인을 테스트합니다.
+      if (Platform.isIOS) {
+        moveToRootTab();
+        return;
+      }
       OAuthToken? resp;
       // INFO: 앱 키 해시 확인 코드
       // final keyHash = await KakaoSdk.origin;
@@ -63,6 +70,10 @@ class _LoginScreenState extends State<LoginScreen> {
           return;
         }
       }
+    }
+
+    void onKakaoLoginButtonClick() {
+      processKakaoLogin();
     }
 
     return DefaultLayout(
