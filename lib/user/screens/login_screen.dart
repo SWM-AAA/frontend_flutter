@@ -118,10 +118,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           moveToRootTab();
         } else {
           //TODO: 사용자가 가입되어 있지 않은 상태라면 사용자 실명 받는 팝업 띄우기
-          Future.delayed(
-            Duration.zero,
-            showRegisterDialog,
-          );
+          showRegisterDialog();
         }
       } catch (error) {
         throw Exception('사용자 정보 요청 실패 $error');
