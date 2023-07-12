@@ -11,8 +11,12 @@ class ImageUploadScreen extends StatefulWidget {
 }
 
 class _ImageUploadScreenState extends State<ImageUploadScreen> {
+  // image picker 를 할 객체
   final ImagePicker picker = ImagePicker();
+  // 선택된 단일 이미지를 담을 곳
   File? image;
+  // 여러 이미지를 담을 리스트
+  List<File>? multipleImages = [];
 
   @override
   Widget build(BuildContext context) {
@@ -25,25 +29,39 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
           width: MediaQuery.of(context).size.width,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            // crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ElevatedButton(
                 onPressed: () async {
-                  XFile? pickedImage =
-                      await picker.pickImage(source: ImageSource.gallery);
+                  // image picker를 통해 이미지를 선택하고, 선택된 이미지를 가져옴
+                  List<XFile>? pickedMultipleImage =
+                      await picker.pickMultiImage();
                   setState(() {
-                    image = File(pickedImage!.path);
+                    // file들의 경로만 받아서 저장
+                    multipleImages =
+                        pickedMultipleImage!.map((e) => File(e.path)).toList();
                   });
                 },
-                child: Text("image upload"),
+                child: Text("multiple image upload"),
               ),
-              image == null
-                  ? Text("no image")
-                  : Image.file(
-                      image!,
-                      height: 200,
-                      width: 200,
-                    )
+              multipleImages == null
+                  ? Text("no image") // 불러온 이미지가 없을땐 no image 표시
+                  : Expanded(
+                      // child가 확장 가능한 위젯
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                        ),
+                        itemCount: multipleImages!.length,
+                        itemBuilder: (context, index) {
+                          // 경로를 통해 이미지를 불러온다.
+                          return GridTile(
+                              child: Image.file(multipleImages![index]));
+                        },
+                      ),
+                    ),
             ],
           ),
         ));

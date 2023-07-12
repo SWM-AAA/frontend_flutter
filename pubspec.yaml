@@ -52,6 +52,8 @@ dependencies:
   flutter_riverpod: ^2.3.6
   # image 관련 라이브러리
   image_picker: ^1.0.0
+  # image picker에서 사진 선택도구를 안드로이드에서 보여주는 방법, 이게 없다면 외부 앱으로 연결되어 선택한다.
+  image_picker_android: ^0.8.7+3
 
   # ---------------------------------------------------
 
