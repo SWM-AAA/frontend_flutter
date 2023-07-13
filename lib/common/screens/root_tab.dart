@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
 import 'package:frontend/custom_map/screens/bottom_navigation_test_screen.dart';
+import 'package:frontend/custom_map/screens/map_screen.dart';
 
 class RootTab extends StatefulWidget {
   const RootTab({super.key});
@@ -82,7 +83,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
           physics: const NeverScrollableScrollPhysics(),
           controller: tabController,
           children: [
-            BottomNavigationTestScreen(testScreenName: '지도 스크린'),
+            MapScreen(),
             BottomNavigationTestScreen(testScreenName: '홈 스크린'),
             BottomNavigationTestScreen(testScreenName: '마이페이지 스크린'),
           ]),

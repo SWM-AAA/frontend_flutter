@@ -50,7 +50,7 @@ dependencies:
   retrofit: ">=4.0.0 <5.0.0"
   logger: any #for logging purpose
   flutter_riverpod: ^2.3.6
-  # google map
+  # google map 사용을 위한 공식 플러그인
   google_maps_flutter: ^2.3.1
   # ---------------------------------------------------
 
