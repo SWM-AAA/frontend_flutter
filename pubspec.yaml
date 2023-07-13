@@ -43,6 +43,8 @@ dependencies:
   flutter_secure_storage: ^8.0.0
   # kakao 로그인을 위한 package
   kakao_flutter_sdk_user: ^1.4.1
+  # 플러터에서 redirect uri로 로그인을 구현하기 위한
+  flutter_web_auth: ^0.5.0
   # API key 관리를 위한 package
   flutter_dotenv: ^5.1.0
   # ---- json_serializble, Retrofit, Riverpod 도입 ----

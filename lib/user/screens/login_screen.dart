@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:frontend/common/components/animated_app_title.dart';
 import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
@@ -108,21 +109,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       // await secureStorage.write(
       //     key: KAKAO_REFRESH_TOKEN_EXPIRES_AT_KEY,
       //     value: resp.refreshTokenExpiresAt.toString());
-
       try {
-        final user = await UserApi.instance.me();
-        //final isRegistered = await requestCheckUserRegistered(user);
-        if (false) {
-          //TODO: 사용자가 이미 가입되어 있는 상태라면 바로 Zeppy에
-          // Refresh Token, AccessToken받는 request 호출하기
-          moveToRootTab();
-        } else {
-          //TODO: 사용자가 가입되어 있지 않은 상태라면 사용자 실명 받는 팝업 띄우기
-          showRegisterDialog();
-        }
+        // 고유한 redirect uri
+        const APP_REDIRECT_URI = "com.aaa.frontend";
+        // 백엔드에서 미리 작성된 API 호출
+        final url = Uri.parse('https://server-url/oauth2/authorization/kakao');
+
+        // 백엔드가 제공한 로그인 페이지에서 로그인 후 callback 데이터 반환
+        final result = await FlutterWebAuth.authenticate(
+            url: url.toString(), callbackUrlScheme: APP_REDIRECT_URI);
+
+        // 백엔드에서 redirect한 callback 데이터
+        // TODO: 우리 프로젝트에서는 header를 통해 토큰이 전달해서 아래 코드를 못씀
+        // final accessToken = Uri.parse(result).queryParameters['access-token'];
+        // final refreshToken = Uri.parse(result).queryParameters['refresh-token'];
+        moveToRootTab();
+        return;
       } catch (error) {
-        throw Exception('사용자 정보 요청 실패 $error');
+        print('카카오 계정으로 로그인에 실패하였습니다: Error: $error');
+        return;
       }
+      // try {
+      //   final user = await UserApi.instance.me();
+      //   //final isRegistered = await requestCheckUserRegistered(user);
+      //   if (false) {
+      //     //TODO: 사용자가 이미 가입되어 있는 상태라면 바로 Zeppy에
+      //     // Refresh Token, AccessToken받는 request 호출하기
+      //     moveToRootTab();
+      //   } else {
+      //     //TODO: 사용자가 가입되어 있지 않은 상태라면 사용자 실명 받는 팝업 띄우기
+      //     showRegisterDialog();
+      //   }
+      // } catch (error) {
+      //   throw Exception('사용자 정보 요청 실패 $error');
+      // }
     }
 
     void onKakaoLoginButtonClick() {
