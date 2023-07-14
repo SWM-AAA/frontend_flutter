@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -25,6 +26,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final dio = ref.watch(dioProvider);
     final secureStorage = ref.watch(secureStorageProvider);
+    String _status = '';
+
+    Future<void> startServer() async {
+      final server = await HttpServer.bind(
+          'https://serverurl/oauth2/authorization/login', 433);
+
+      server.listen((req) async {
+        setState(() {
+          _status = 'Received request!';
+        });
+
+        req.response.headers.add('Content-Type', 'text/html');
+
+        req.response.close();
+      });
+    }
+
+    @override
+    void initState() {
+      super.initState();
+      startServer();
+    }
 
     void moveToRootTab() {
       Navigator.of(context).pushAndRemoveUntil(
@@ -111,9 +134,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       //     value: resp.refreshTokenExpiresAt.toString());
       try {
         // 고유한 redirect uri
-        const APP_REDIRECT_URI = "com.aaa.frontend";
+        const APP_REDIRECT_URI = "com.aaa";
         // 백엔드에서 미리 작성된 API 호출
-        final url = Uri.parse('https://server-url/oauth2/authorization/kakao');
+
+        final url = Uri.parse(
+            'https://serverurl/oauth2/authorization/kakao?redirect_uri=$APP_REDIRECT_URI');
 
         // 백엔드가 제공한 로그인 페이지에서 로그인 후 callback 데이터 반환
         final result = await FlutterWebAuth.authenticate(
