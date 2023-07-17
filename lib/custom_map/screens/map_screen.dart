@@ -61,7 +61,6 @@ class _MapScreenState extends State<MapScreen> {
         ),
         ElevatedButton(
           onPressed: () async {
-            print("추가!@!!!");
             Random random = Random();
             int randomNumber = random.nextInt(100); // 0부터 99까지의 랜덤 숫자 생성
             Marker marker = Marker(
