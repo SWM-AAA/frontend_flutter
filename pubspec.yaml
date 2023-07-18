@@ -51,6 +51,8 @@ dependencies:
   logger: any #for logging purpose
   flutter_riverpod: ^2.3.6
   # ---------------------------------------------------
+  # for Oauth2.0
+  flutter_web_auth_2: ^2.0.0
 
 dev_dependencies:
   flutter_test:
