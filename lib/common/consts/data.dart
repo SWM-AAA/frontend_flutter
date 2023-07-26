@@ -17,3 +17,5 @@ final deviceIp = Platform.isIOS ? simulatorIp : emulatorIp;
 
 // app anme
 const APP_NAME = 'Zeppy';
+// app scheme
+const APP_SCHEME = 'com.aaa';
