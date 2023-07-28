@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui';
 import 'dart:ui' as ui;
 
@@ -11,9 +10,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 Future<BitmapDescriptor> createMarkerIcon(String imagePath, String userName, Size size) async {
   final PictureRecorder pictureRecorder = PictureRecorder();
   final Canvas canvas = Canvas(pictureRecorder);
-  final Radius radius = Radius.circular(size.width / 2);
 
-  drawProfileBorderDesign(canvas, size, radius);
+  drawProfileBorderDesign(canvas, size);
 
   drawUserName(userName, size, canvas);
 
@@ -25,28 +23,60 @@ Future<BitmapDescriptor> createMarkerIcon(String imagePath, String userName, Siz
   return bitmapDescriptor;
 }
 
-void drawProfileBorderDesign(Canvas canvas, Size size, Radius radius) {
-  drawShadowCircle(canvas, size, radius);
-  drawBorderCircle(canvas, size, radius);
+void drawProfileBorderDesign(Canvas canvas, Size size) {
+  drawShadowCircle(canvas, size);
+  drawBorderCircle(canvas, size);
 }
 
-void drawShadowCircle(Canvas canvas, Size size, Radius radius) {
-  canvas.drawRRect(
+class RoundRectangle {
+  final double left;
+  final double top;
+  final double width;
+  final double height;
+  final Radius radius;
+  final Paint paint;
+
+  RoundRectangle({
+    required this.left,
+    required this.top,
+    required this.width,
+    required this.height,
+    required this.radius,
+    required this.paint,
+  });
+  drawRoundRectangle(Canvas canvas) {
+    canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromLTWH(0.0, userNameHeight, size.width, size.height),
+        Rect.fromLTWH(left, top, width, height),
         radius,
       ),
-      shadowPaint);
+      paint,
+    );
+  }
 }
 
-void drawBorderCircle(Canvas canvas, Size size, Radius radius) {
-  canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(
-            shadowWidth, shadowWidth + userNameHeight, size.width - (shadowWidth * 2), size.height - (shadowWidth * 2)),
-        radius,
-      ),
-      borderPaint);
+void drawShadowCircle(Canvas canvas, Size size) {
+  RoundRectangle shadowCircle = RoundRectangle(
+    left: 0.0,
+    top: userNameHeight,
+    width: size.width,
+    height: size.height,
+    radius: Radius.circular(size.width / 2),
+    paint: shadowPaint,
+  );
+  shadowCircle.drawRoundRectangle(canvas);
+}
+
+void drawBorderCircle(Canvas canvas, Size size) {
+  RoundRectangle borderCircle = RoundRectangle(
+    left: shadowWidth,
+    top: shadowWidth + userNameHeight,
+    width: size.width - (shadowWidth * 2),
+    height: size.height - (shadowWidth * 2),
+    radius: Radius.circular(size.width / 2),
+    paint: borderPaint,
+  );
+  borderCircle.drawRoundRectangle(canvas);
 }
 
 void drawUserName(String userName, Size size, Canvas canvas) {
@@ -75,18 +105,15 @@ TextPainter configureUserNameTextPainter(String userName) {
 }
 
 void drawUserNameBackground(Canvas canvas, Size size, TextPainter textPainter) {
-  canvas.drawRRect(
-    RRect.fromRectAndRadius(
-      Rect.fromLTWH(
-        (size.width - textPainter.width) / 2 - userNameFontSize / 2,
-        0,
-        textPainter.width + userNameFontSize,
-        textPainter.height + userNameFontSize / 5,
-      ),
-      const Radius.circular(10.0),
-    ),
-    userNameBackgroundPaint,
+  RoundRectangle userNameBackground = RoundRectangle(
+    left: (size.width - textPainter.width) / 2 - userNameFontSize / 2,
+    top: 0,
+    width: textPainter.width + userNameFontSize,
+    height: textPainter.height + userNameFontSize / 5,
+    radius: const Radius.circular(10.0),
+    paint: userNameBackgroundPaint,
   );
+  userNameBackground.drawRoundRectangle(canvas);
 }
 
 void paintTextUserName(Size size, TextPainter textPainter, Canvas canvas) {
