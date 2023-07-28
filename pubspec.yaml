@@ -52,6 +52,8 @@ dependencies:
   flutter_riverpod: ^2.3.6
   # google map 사용을 위한 공식 플러그인
   google_maps_flutter: ^2.3.1
+  # 위치 정보를 가져오기 위한 플러그인
+  geolocator: ^9.0.2
   # ---------------------------------------------------
   # for Oauth2.0
   flutter_web_auth_2: ^2.0.0
