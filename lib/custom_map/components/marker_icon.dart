@@ -1,54 +1,61 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:frontend/custom_map/const/marker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-Future<BitmapDescriptor> createMarkerIcon(
-    String imagePath, String userName, Size size) async {
-  final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+Future<BitmapDescriptor> createMarkerIcon(String imagePath, String userName, Size size) async {
+  final PictureRecorder pictureRecorder = PictureRecorder();
   final Canvas canvas = Canvas(pictureRecorder);
-
   final Radius radius = Radius.circular(size.width / 2);
 
-  final Paint userNameBackgroundPaint = Paint()..color = Colors.blue.shade900;
-  final double userNameHeight = 70.0;
-  final double userNameFontSize = 50.0;
-  final Paint shadowPaint = Paint()..color = Colors.blue.withAlpha(100);
-  final double shadowWidth = 15.0;
+  drawProfileBorderDesign(canvas, size, radius);
 
-  final Paint borderPaint = Paint()..color = Colors.white;
-  final double borderWidth = 3.0;
+  drawUserName(userName, size, canvas);
 
-  final double imageOffset = shadowWidth + borderWidth;
+  await paintProfileImage(size, canvas, imagePath);
 
-  // Add shadow circle
+  ui.Image markerImage = await convertCanvasToImage(pictureRecorder, size);
+  Uint8List markerImageBytes = await convertImageToBytes(markerImage);
+  BitmapDescriptor bitmapDescriptor = BitmapDescriptor.fromBytes(markerImageBytes);
+  return bitmapDescriptor;
+}
+
+void drawProfileBorderDesign(Canvas canvas, Size size, Radius radius) {
+  drawShadowCircle(canvas, size, radius);
+  drawBorderCircle(canvas, size, radius);
+}
+
+void drawShadowCircle(Canvas canvas, Size size, Radius radius) {
   canvas.drawRRect(
-      RRect.fromRectAndCorners(
+      RRect.fromRectAndRadius(
         Rect.fromLTWH(0.0, userNameHeight, size.width, size.height),
-        topLeft: radius,
-        topRight: radius,
-        bottomLeft: radius,
-        bottomRight: radius,
+        radius,
       ),
       shadowPaint);
+}
 
-  // Add border circle
+void drawBorderCircle(Canvas canvas, Size size, Radius radius) {
   canvas.drawRRect(
-      RRect.fromRectAndCorners(
-        Rect.fromLTWH(shadowWidth, shadowWidth + userNameHeight,
-            size.width - (shadowWidth * 2), size.height - (shadowWidth * 2)),
-        topLeft: radius,
-        topRight: radius,
-        bottomLeft: radius,
-        bottomRight: radius,
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+            shadowWidth, shadowWidth + userNameHeight, size.width - (shadowWidth * 2), size.height - (shadowWidth * 2)),
+        radius,
       ),
       borderPaint);
+}
 
-  // Add username text
+void drawUserName(String userName, Size size, Canvas canvas) {
+  TextPainter textPainter = configureUserNameTextPainter(userName);
+  drawUserNameBackground(canvas, size, textPainter);
+  paintTextUserName(size, textPainter, canvas);
+}
+
+TextPainter configureUserNameTextPainter(String userName) {
   TextPainter textPainter = TextPainter(
     textDirection: TextDirection.ltr,
     textAlign: TextAlign.center,
@@ -57,52 +64,45 @@ Future<BitmapDescriptor> createMarkerIcon(
     text: userName,
     style: TextStyle(
       fontSize: userNameFontSize,
-      color: Colors.blue.shade100,
-      fontWeight: FontWeight.bold,
-      letterSpacing: 4.0,
+      color: userNameColor,
+      fontWeight: userNameFontWeight,
+      letterSpacing: userNameLetterSpacing,
     ),
   );
 
   textPainter.layout();
+  return textPainter;
+}
 
-  // add username background rectangle
-  Rect userNameRect = Rect.fromLTWH(
-    (size.width - textPainter.width) / 2 - userNameFontSize / 2,
-    0,
-    textPainter.width + userNameFontSize,
-    textPainter.height + userNameFontSize / 5,
+void drawUserNameBackground(Canvas canvas, Size size, TextPainter textPainter) {
+  canvas.drawRRect(
+    RRect.fromRectAndRadius(
+      Rect.fromLTWH(
+        (size.width - textPainter.width) / 2 - userNameFontSize / 2,
+        0,
+        textPainter.width + userNameFontSize,
+        textPainter.height + userNameFontSize / 5,
+      ),
+      const Radius.circular(10.0),
+    ),
+    userNameBackgroundPaint,
   );
-  canvas.drawRRect(RRect.fromRectAndRadius(userNameRect, Radius.circular(10.0)),
-      userNameBackgroundPaint);
-  // Add username text
-  textPainter.paint(
-      canvas,
-      Offset(
-        (size.width - textPainter.width) / 2,
-        userNameFontSize / 5,
-      ));
+}
 
-  // Oval for the image
-  Rect oval = Rect.fromLTWH(imageOffset, imageOffset + userNameHeight,
-      size.width - (imageOffset * 2), size.height - (imageOffset * 2));
+void paintTextUserName(Size size, TextPainter textPainter, Canvas canvas) {
+  double horizontalOffset = (size.width - textPainter.width) / 2;
 
-  // Add path for oval image
-  canvas.clipPath(Path()..addOval(oval));
+  textPainter.paint(canvas, Offset(horizontalOffset, userNameFontSize / 5));
+}
 
-  // Add image
-  ui.Image image = await getImageFromPath(imagePath);
-  paintImage(canvas: canvas, image: image, rect: oval, fit: BoxFit.fitWidth);
+Future<void> paintProfileImage(Size size, Canvas canvas, String imagePath) async {
+  Rect imageRect = Rect.fromLTWH(
+      imageOffset, imageOffset + userNameHeight, size.width - (imageOffset * 2), size.height - (imageOffset * 2));
 
-  // Convert canvas to image
-  final ui.Image markerAsImage = await pictureRecorder.endRecording().toImage(
-      size.width.toInt(), size.height.toInt() + userNameHeight.toInt());
+  canvas.clipPath(Path()..addOval(imageRect));
 
-  // Convert image to bytes
-  final ByteData? byteData =
-      await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
-  final Uint8List uint8List = byteData!.buffer.asUint8List();
-
-  return BitmapDescriptor.fromBytes(uint8List);
+  ui.Image profileImage = await getImageFromPath(imagePath);
+  paintImage(canvas: canvas, image: profileImage, rect: imageRect, fit: BoxFit.fitWidth);
 }
 
 Future<ui.Image> getImageFromPath(String imagePath) async {
@@ -113,4 +113,16 @@ Future<ui.Image> getImageFromPath(String imagePath) async {
   });
 
   return completer.future;
+}
+
+Future<Uint8List> convertImageToBytes(ui.Image markerAsImage) async {
+  final ByteData? byteData = await markerAsImage.toByteData(format: ImageByteFormat.png);
+  final Uint8List markerImageBytes = byteData!.buffer.asUint8List();
+  return markerImageBytes;
+}
+
+Future<ui.Image> convertCanvasToImage(PictureRecorder pictureRecorder, Size size) async {
+  final ui.Image markerImage =
+      await pictureRecorder.endRecording().toImage(size.width.toInt(), size.height.toInt() + userNameHeight.toInt());
+  return markerImage;
 }
