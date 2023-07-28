@@ -40,9 +40,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     Future<bool> requestCheckUserRegistered(User user) async {
       if (user.kakaoAccount?.email != null) {
-        final checkRegisterResp = await dio.post(
-            dotenv.env['AAA_PUBLIC_API_BASE'].toString(),
-            data: {'memberEmail': '${user.kakaoAccount?.email}'});
+        final checkRegisterResp = await dio
+            .post(dotenv.env['AAA_PUBLIC_API_BASE'].toString(), data: {'memberEmail': '${user.kakaoAccount?.email}'});
         return checkRegisterResp.data['isRegistered'];
       } else {
         throw Exception('email 정보 없음');
@@ -75,13 +74,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           url: uri.toString(),
           callbackUrlScheme: APP_SCHEME,
         );
-        log('hi');
-        log(webAuthResp);
 
-        final accessToken =
-            Uri.parse(webAuthResp).queryParameters[ACCESS_TOKEN_KEY];
-        final refreshToken =
-            Uri.parse(webAuthResp).queryParameters[REFRESH_TOKEN_KEY];
+        final accessToken = Uri.parse(webAuthResp).queryParameters[ACCESS_TOKEN_KEY];
+        final refreshToken = Uri.parse(webAuthResp).queryParameters[REFRESH_TOKEN_KEY];
 
         await secureStorage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
         await secureStorage.write(key: REFRESH_TOKEN_KEY, value: refreshToken);
@@ -96,7 +91,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     void onKakaoLoginButtonClick() {
-      oAuthLoginPressed(API.googleLogin);
+      oAuthLoginPressed(API.kakaoLogin);
     }
 
     return DefaultLayout(
