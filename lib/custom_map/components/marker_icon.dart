@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-Future<BitmapDescriptor> createMarkerIcon(
-    String imagePath, String userName, Size size) async {
+Future<BitmapDescriptor> createMarkerIcon(String imagePath, String userName, Size size) async {
   final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
   final Canvas canvas = Canvas(pictureRecorder);
 
@@ -39,8 +38,8 @@ Future<BitmapDescriptor> createMarkerIcon(
   // Add border circle
   canvas.drawRRect(
       RRect.fromRectAndCorners(
-        Rect.fromLTWH(shadowWidth, shadowWidth + userNameHeight,
-            size.width - (shadowWidth * 2), size.height - (shadowWidth * 2)),
+        Rect.fromLTWH(
+            shadowWidth, shadowWidth + userNameHeight, size.width - (shadowWidth * 2), size.height - (shadowWidth * 2)),
         topLeft: radius,
         topRight: radius,
         bottomLeft: radius,
@@ -72,8 +71,7 @@ Future<BitmapDescriptor> createMarkerIcon(
     textPainter.width + userNameFontSize,
     textPainter.height + userNameFontSize / 5,
   );
-  canvas.drawRRect(RRect.fromRectAndRadius(userNameRect, Radius.circular(10.0)),
-      userNameBackgroundPaint);
+  canvas.drawRRect(RRect.fromRectAndRadius(userNameRect, Radius.circular(10.0)), userNameBackgroundPaint);
   // Add username text
   textPainter.paint(
       canvas,
@@ -83,8 +81,8 @@ Future<BitmapDescriptor> createMarkerIcon(
       ));
 
   // Oval for the image
-  Rect oval = Rect.fromLTWH(imageOffset, imageOffset + userNameHeight,
-      size.width - (imageOffset * 2), size.height - (imageOffset * 2));
+  Rect oval = Rect.fromLTWH(
+      imageOffset, imageOffset + userNameHeight, size.width - (imageOffset * 2), size.height - (imageOffset * 2));
 
   // Add path for oval image
   canvas.clipPath(Path()..addOval(oval));
@@ -94,12 +92,11 @@ Future<BitmapDescriptor> createMarkerIcon(
   paintImage(canvas: canvas, image: image, rect: oval, fit: BoxFit.fitWidth);
 
   // Convert canvas to image
-  final ui.Image markerAsImage = await pictureRecorder.endRecording().toImage(
-      size.width.toInt(), size.height.toInt() + userNameHeight.toInt());
+  final ui.Image markerAsImage =
+      await pictureRecorder.endRecording().toImage(size.width.toInt(), size.height.toInt() + userNameHeight.toInt());
 
   // Convert image to bytes
-  final ByteData? byteData =
-      await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
+  final ByteData? byteData = await markerAsImage.toByteData(format: ui.ImageByteFormat.png);
   final Uint8List uint8List = byteData!.buffer.asUint8List();
 
   return BitmapDescriptor.fromBytes(uint8List);
