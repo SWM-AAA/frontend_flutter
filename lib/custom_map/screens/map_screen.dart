@@ -2,7 +2,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/custom_map/components/const/data.dart';
+import 'package:frontend/custom_map/components/const/type.dart';
 import 'package:frontend/custom_map/components/custom_google_map.dart';
+import 'package:frontend/custom_map/components/marker/custom_marker.dart';
 import 'package:frontend/custom_map/components/marker_icon.dart';
 import 'package:frontend/custom_map/components/test_button/create_init_marker_button.dart';
 import 'package:frontend/custom_map/components/test_button/delete_all_marker_button.dart';
@@ -40,7 +43,6 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
     currentLocation = getCurrentIfPossible();
-    logger.e(currentLocation);
     locationSettings = const LocationSettings(
       accuracy: LocationAccuracy.high,
       distanceFilter: 1,
@@ -89,20 +91,29 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> updateMapCameraPosition(Position position) async {
     LatLng latLng = LatLng(position.latitude, position.longitude);
-    CameraPosition cameraPosition = CameraPosition(target: latLng, zoom: 12);
+    CameraPosition cameraPosition = CameraPosition(target: latLng, zoom: 18);
     googleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     updateMyMarkerPosition(latLng);
   }
 
   // 현재 위치를 표시하는 빨간색 마커, 내 위치를 다른 아이콘으로 표기하고싶을때 사용할것같다.
-  void updateMyMarkerPosition(LatLng latLng) {
-    Marker marker = Marker(
-      markerId: const MarkerId('current_location'),
-      position: latLng,
+  void updateMyMarkerPosition(LatLng latLng) async {
+    MarkerInfo markerInfo = MarkerInfo(
+      markerId: 'I',
+      userName: '휘서',
+      imagePath: MY_PROFILE_IMAGE_PATH,
     );
+    Marker newMarker = await createMarker(markerInfo, latLng);
+
     setState(() {
-      markers.clear();
-      markers.add(marker);
+      // markers.removeWhere((element) => element.markerId.value == 'I');
+      // markers.add(newMarker);
+      int index = markers.indexWhere((element) => element.markerId.value == 'I');
+      if (index != -1) {
+        markers[index] = newMarker;
+      } else {
+        markers.add(newMarker);
+      }
     });
   }
 
@@ -124,16 +135,17 @@ class _MapScreenState extends State<MapScreen> {
         ),
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           CreateInitMarkerButton(
-            markers: markers,
             addMarker: (Marker marker) {
               setState(() {
                 markers.add(marker);
+                logger.v("marker");
               });
             },
           ),
           DeleteAllMarkerButton(
             deleteAllMarker: () {
               setState(() {
+                print('fsdf');
                 markers.clear();
               });
             },

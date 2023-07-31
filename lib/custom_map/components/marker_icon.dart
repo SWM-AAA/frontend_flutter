@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-Future<BitmapDescriptor> createMarkerIcon(String imagePath, String userName, Size size) async {
+Future<BitmapDescriptor> createMarkerIcon(String imagePath, String userName) async {
+  final Size size = Size(200, 200);
   final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
   final Canvas canvas = Canvas(pictureRecorder);
 
