@@ -7,8 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:frontend/custom_map/const/marker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-Future<BitmapDescriptor> createMarkerIcon(String imagePath, String userName, Size size) async {
-  final PictureRecorder pictureRecorder = PictureRecorder();
+Future<BitmapDescriptor> createMarkerIcon(String imagePath, String userName) async {
+  final Size size = Size(200, 200);
+  final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+
   final Canvas canvas = Canvas(pictureRecorder);
 
   drawProfileBorderDesign(canvas, size);
@@ -49,6 +51,7 @@ class RoundRectangle {
       RRect.fromRectAndRadius(
         Rect.fromLTWH(left, top, width, height),
         radius,
+
       ),
       paint,
     );
@@ -113,6 +116,7 @@ void drawUserNameBackground(Canvas canvas, Size size, TextPainter textPainter) {
     radius: const Radius.circular(10.0),
     paint: userNameBackgroundPaint,
   );
+
   userNameBackground.drawRoundRectangle(canvas);
 }
 
@@ -130,6 +134,7 @@ Future<void> paintProfileImage(Size size, Canvas canvas, String imagePath) async
 
   ui.Image profileImage = await getImageFromPath(imagePath);
   paintImage(canvas: canvas, image: profileImage, rect: imageRect, fit: BoxFit.fitWidth);
+
 }
 
 Future<ui.Image> getImageFromPath(String imagePath) async {
