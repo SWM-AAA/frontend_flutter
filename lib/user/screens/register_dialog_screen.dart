@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/components/custom_text_from.dart';
+import 'package:frontend/common/riverpod/register_dialog_screen.dart';
 import 'package:frontend/common/screens/root_tab.dart';
 import 'package:frontend/user/consts/data.dart';
 
-class RegisterDialogScreen extends StatefulWidget {
+class RegisterDialogScreen extends ConsumerStatefulWidget {
   const RegisterDialogScreen({super.key});
 
   @override
-  State<RegisterDialogScreen> createState() => _RegisterDialogScreenState();
+  ConsumerState<RegisterDialogScreen> createState() => _RegisterDialogScreenState();
 }
 
-class _RegisterDialogScreenState extends State<RegisterDialogScreen> {
+class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
   String userRealName = '';
 
   @override
@@ -60,6 +62,9 @@ class _RegisterDialogScreenState extends State<RegisterDialogScreen> {
                   ),
                 ),
                 onPressed: () {
+                  if (userRealName != '') {
+                    ref.read(userNameProvider.notifier).update((state) => userRealName);
+                  }
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
                         builder: (_) => const RootTab(),
