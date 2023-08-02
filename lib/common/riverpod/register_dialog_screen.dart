@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/custom_map/components/const/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final userNameProvider = StateProvider<String>((ref) => 'No name');
-final userProfileImagePathProvider = StateProvider<String>((ref) => MY_PROFILE_IMAGE_PATH);
+final registeredUserInfoProvider =
+    StateNotifierProvider<RegisteredUserInfoNotifier, RegisteredUserInfoModel>((ref) => RegisteredUserInfoNotifier());
 
 class RegisteredUserInfoModel {
   String userName;
@@ -27,9 +27,6 @@ class RegisteredUserInfoModel {
     );
   }
 }
-
-final registeredUserInfoProvider =
-    StateNotifierProvider<RegisteredUserInfoNotifier, RegisteredUserInfoModel>((ref) => RegisteredUserInfoNotifier());
 
 class RegisteredUserInfoNotifier extends StateNotifier<RegisteredUserInfoModel> {
   RegisteredUserInfoNotifier()
