@@ -63,7 +63,7 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
                 ),
                 onPressed: () {
                   if (userRealName != '') {
-                    ref.read(userNameProvider.notifier).update((state) => userRealName);
+                    ref.read(registeredUserInfoProvider.notifier).setUserName(userRealName);
                   }
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(

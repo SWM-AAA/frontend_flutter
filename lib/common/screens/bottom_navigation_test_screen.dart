@@ -18,7 +18,7 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
 
   @override
   Widget build(BuildContext context) {
-    final userNameWatch = ref.watch(userNameProvider);
+    final userNameWatch = ref.watch(registeredUserInfoProvider).userName;
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Column(
