@@ -10,7 +10,7 @@ Future<Marker> createMarker(MarkerInfo markerInfo, LatLng latLng) async {
     onTap: () => print("tapped!"),
     position: latLng,
     icon: await createMarkerIcon(
-      MY_PROFILE_IMAGE_PATH,
+      markerInfo.imagePath,
       markerInfo.userName,
     ),
   );

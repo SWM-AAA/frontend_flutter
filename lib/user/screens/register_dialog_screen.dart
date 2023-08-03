@@ -10,6 +10,7 @@ import 'package:frontend/common/screens/root_tab.dart';
 import 'package:frontend/user/consts/data.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
 class RegisterDialogScreen extends ConsumerStatefulWidget {
@@ -153,6 +154,8 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
                     final Directory directory = await getApplicationDocumentsDirectory();
                     final String userProfileImageFilePath = directory.path + '/user_profile_image.png';
                     final File newImage = await userProfileImageFile!.copy(userProfileImageFilePath);
+                    var logger = Logger();
+                    logger.e(directory);
                     ref.read(registeredUserInfoProvider.notifier).setUserImage(userProfileImageFilePath);
                   }
 
