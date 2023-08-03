@@ -65,6 +65,10 @@ dependencies:
   image_picker: ^1.0.1
   # image picker에서 사진 선택도구를 안드로이드에서 보여주는 방법, 이게 없다면 외부 앱으로 연결되어 선택한다.
   image_picker_android: ^0.8.7+4
+  # 플러터 파일시스템에서 위치를 가져오기 위함. 임시 및 앱 데이터 디렉토리를 찾기 위함
+  path_provider: ^2.0.15
+  # 이미지를 원하는대로 크롭하는 도구, 3가지 타입이 존재, cut이나 회전도 가능
+  image_cropper: ^5.0.0
 
 dev_dependencies:
   flutter_test:
