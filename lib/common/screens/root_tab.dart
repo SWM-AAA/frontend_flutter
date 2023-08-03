@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
-import 'package:frontend/custom_map/screens/bottom_navigation_test_screen.dart';
+import 'package:frontend/common/riverpod/register_dialog_screen.dart';
+import 'package:frontend/common/screens/bottom_navigation_test_screen.dart';
 import 'package:frontend/custom_map/screens/map_screen.dart';
 
-class RootTab extends StatefulWidget {
+class RootTab extends ConsumerStatefulWidget {
   const RootTab({super.key});
 
   @override
-  State<RootTab> createState() => _RootTabState();
+  ConsumerState<RootTab> createState() => _RootTabState();
 }
 
-class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
+class _RootTabState extends ConsumerState<RootTab> with SingleTickerProviderStateMixin {
   late TabController tabController;
   int bottomNavigationBarCurrentIndex = 1;
 
@@ -19,7 +21,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
     super.initState();
 
     tabController = TabController(
-      length: 3,
+      length: 2,
       vsync: this,
       initialIndex: bottomNavigationBarCurrentIndex,
     );
@@ -42,6 +44,9 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final userNameWatch = ref.watch(registeredUserInfoProvider).userName;
+    final userProfileImagePathWatch = ref.watch(registeredUserInfoProvider).userProfileImagePath;
+
     return DefaultLayout(
       title: 'Zeppy',
       bottomNavigationBar: BottomNavigationBar(
@@ -71,22 +76,12 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
             ),
             label: '홈',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-            ),
-            label: '마이페이지',
-          ),
         ],
       ),
-      child: TabBarView(
-          physics: const NeverScrollableScrollPhysics(),
-          controller: tabController,
-          children: [
-            MapScreen(),
-            BottomNavigationTestScreen(testScreenName: '홈 스크린'),
-            BottomNavigationTestScreen(testScreenName: '마이페이지 스크린'),
-          ]),
+      child: TabBarView(physics: const NeverScrollableScrollPhysics(), controller: tabController, children: [
+        MapScreen(userName: userNameWatch.toString(), userProfileImagePath: userProfileImagePathWatch.toString()),
+        BottomNavigationTestScreen(testScreenName: '홈 스크린'),
+      ]),
     );
   }
 }

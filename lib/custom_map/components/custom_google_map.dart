@@ -6,10 +6,12 @@ class CustomGoogleMap extends StatelessWidget {
   final CameraPosition initCameraPosition;
   final List<Marker> markers;
   final Function(GoogleMapController) updateControllerOnMapCreated;
+  final Function(CameraPosition) onCameraMove;
   CustomGoogleMap({
     required this.initCameraPosition,
     required this.markers,
     required this.updateControllerOnMapCreated,
+    required this.onCameraMove,
     Key? key,
   }) : super(key: key);
   @override
@@ -26,6 +28,9 @@ class CustomGoogleMap extends StatelessWidget {
       myLocationEnabled: true, // 내 위치를 중앙 파란점 + 방향 화살표
       compassEnabled: false, // 맵 회전시 다시 북쪽을 향하게하는 나침반
       markers: Set.from(markers),
+      onCameraMove: (position) {
+        onCameraMove(position);
+      },
     );
   }
 }
