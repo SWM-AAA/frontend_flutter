@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/custom_map/components/const/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,7 +33,7 @@ class RegisteredUserInfoNotifier extends StateNotifier<RegisteredUserInfoModel> 
   RegisteredUserInfoNotifier()
       : super(RegisteredUserInfoModel(
           userName: 'No name',
-          userProfileImagePath: MY_PROFILE_IMAGE_PATH,
+          userProfileImagePath: MY_PROFILE_DEFAULT_IMAGE_PATH,
         )) {
     _loadRegisteredUserInfo();
   }
@@ -41,7 +42,7 @@ class RegisteredUserInfoNotifier extends StateNotifier<RegisteredUserInfoModel> 
   Future<void> _loadRegisteredUserInfo() async {
     final prefs = await SharedPreferences.getInstance();
     final userName = prefs.getString('userName') ?? 'No name';
-    final userProfileImagePath = prefs.getString('userProfileImagePath') ?? MY_PROFILE_IMAGE_PATH;
+    final userProfileImagePath = prefs.getString('userProfileImagePath') ?? MY_PROFILE_DEFAULT_IMAGE_PATH;
     state = RegisteredUserInfoModel(userName: userName, userProfileImagePath: userProfileImagePath);
   }
 
