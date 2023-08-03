@@ -61,6 +61,10 @@ dependencies:
   # ---------------------------------------------------
   # for Oauth2.0
   flutter_web_auth_2: ^2.0.0
+  # 이미지 불러오기
+  image_picker: ^1.0.1
+  # image picker에서 사진 선택도구를 안드로이드에서 보여주는 방법, 이게 없다면 외부 앱으로 연결되어 선택한다.
+  image_picker_android: ^0.8.7+4
 
 dev_dependencies:
   flutter_test:

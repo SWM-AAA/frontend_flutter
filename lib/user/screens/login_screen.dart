@@ -121,7 +121,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       height: 12.0,
                     ),
                     KakaoLoginButton(
-                      onPressed: onKakaoLoginButtonClick,
+                      onPressed: showRegisterDialog,
                     ),
                   ],
                 ),
