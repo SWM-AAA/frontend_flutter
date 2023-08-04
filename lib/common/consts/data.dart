@@ -19,3 +19,8 @@ final deviceIp = Platform.isIOS ? simulatorIp : emulatorIp;
 const APP_NAME = 'Zeppy';
 // app scheme
 const APP_SCHEME = 'com.aaa';
+
+// 유저 기본 프로필 이미지 경로
+const MY_PROFILE_IMAGE_PATH = 'assets/images/profile_pictures/user_profile.jpeg';
+const MY_PROFILE_DEFAULT_IMAGE_PATH = 'assets/images/profile_pictures/default_profile.png';
+const USER_PROFILE_IMAGE_FILE_PATH = 'assets/images/profile_pictures/default_profile.png';

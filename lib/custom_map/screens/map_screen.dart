@@ -14,7 +14,14 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  final String userName;
+  final String userProfileImagePath;
+
+  const MapScreen({
+    super.key,
+    required this.userName,
+    required this.userProfileImagePath,
+  });
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -28,6 +35,7 @@ class _MapScreenState extends State<MapScreen> {
   late StreamSubscription<Position> positionStream;
 
   late GoogleMapController googleMapController;
+  double cameraZoom = 15;
   final List<Marker> markers = [];
 
   CameraPosition initCameraPosition = const CameraPosition(
@@ -36,7 +44,7 @@ class _MapScreenState extends State<MapScreen> {
       37.540853,
       127.078971,
     ),
-    zoom: 14.4746,
+    zoom: 15,
   );
 
   @override
@@ -47,6 +55,8 @@ class _MapScreenState extends State<MapScreen> {
       accuracy: LocationAccuracy.high,
       distanceFilter: 1,
     );
+    logger.w(widget.userName);
+    logger.w(widget.userProfileImagePath);
 
     positionStream = Geolocator.getPositionStream(
             locationSettings: locationSettings) // 최소 1m 움직였을때 listen해서 아래 updateMapCameraPosition 실행
@@ -91,7 +101,7 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> updateMapCameraPosition(Position position) async {
     LatLng latLng = LatLng(position.latitude, position.longitude);
-    CameraPosition cameraPosition = CameraPosition(target: latLng, zoom: 18);
+    CameraPosition cameraPosition = CameraPosition(target: latLng, zoom: cameraZoom);
     googleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     updateMyMarkerPosition(latLng);
   }
@@ -100,8 +110,8 @@ class _MapScreenState extends State<MapScreen> {
   void updateMyMarkerPosition(LatLng latLng) async {
     MarkerInfo markerInfo = MarkerInfo(
       markerId: 'I',
-      userName: '휘서',
-      imagePath: MY_PROFILE_IMAGE_PATH,
+      userName: widget.userName,
+      imagePath: widget.userProfileImagePath,
     );
     Marker newMarker = await createMarker(markerInfo, latLng);
 
@@ -121,8 +131,8 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 400,
+        Expanded(
+          // height: 400,
           child: CustomGoogleMap(
             initCameraPosition: initCameraPosition,
             markers: markers,
@@ -131,26 +141,13 @@ class _MapScreenState extends State<MapScreen> {
                 googleMapController = controller;
               });
             },
+            onCameraMove: (CameraPosition cameraPosition) {
+              setState(() {
+                cameraZoom = cameraPosition.zoom;
+              });
+            },
           ),
         ),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          CreateInitMarkerButton(
-            addMarker: (Marker marker) {
-              setState(() {
-                markers.add(marker);
-                logger.v("marker");
-              });
-            },
-          ),
-          DeleteAllMarkerButton(
-            deleteAllMarker: () {
-              setState(() {
-                print('fsdf');
-                markers.clear();
-              });
-            },
-          )
-        ]),
       ],
     );
   }

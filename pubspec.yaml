@@ -41,6 +41,10 @@ dependencies:
   # token이나 user data를 Android의 경우 keystore영역에 ios에서는 keychain이라는 내부 저장소에 저장합니다.
   # 시스템만이 접근 가능한 컨테이너에 저장하기에 루팅을 해도 접근이 불가능합니다.
   flutter_secure_storage: ^8.0.0
+  # shared_preferences는 앱을 껏다 켜도 데이터를 유지할 수 있으며
+  # 간단한 키-값 쌍을 읽고 쓰는데 사용됩니다.
+  #  iOS에서는 NSUserDefaults를, Android에서는 SharedPreferences를 래핑합니다.
+  shared_preferences: ^2.2.0
   # kakao 로그인을 위한 package
   kakao_flutter_sdk_user: ^1.4.1
   # API key 관리를 위한 package
@@ -57,6 +61,14 @@ dependencies:
   # ---------------------------------------------------
   # for Oauth2.0
   flutter_web_auth_2: ^2.0.0
+  # 이미지 불러오기
+  image_picker: ^1.0.1
+  # image picker에서 사진 선택도구를 안드로이드에서 보여주는 방법, 이게 없다면 외부 앱으로 연결되어 선택한다.
+  image_picker_android: ^0.8.7+4
+  # 플러터 파일시스템에서 위치를 가져오기 위함. 임시 및 앱 데이터 디렉토리를 찾기 위함
+  path_provider: ^2.0.15
+  # 이미지를 원하는대로 크롭하는 도구, 3가지 타입이 존재, cut이나 회전도 가능
+  image_cropper: ^5.0.0
 
 dev_dependencies:
   flutter_test:
