@@ -10,6 +10,7 @@ import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
 import 'package:frontend/common/screens/root_tab.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
+import 'package:frontend/user/components/apple_login_button.dart';
 import 'package:frontend/user/components/google_login_button.dart';
 import 'package:frontend/user/components/kakao_login_button.dart';
 import 'package:frontend/user/screens/register_dialog_screen.dart';
