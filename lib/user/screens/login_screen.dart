@@ -121,7 +121,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(
                       height: 12.0,
                     ),
-                    BasicLoginButton(
+
+                    KakaoLoginButton(
                       onPressed: showRegisterDialog,
                     ),
                   ],
