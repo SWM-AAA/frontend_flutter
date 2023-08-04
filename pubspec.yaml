@@ -103,6 +103,7 @@ flutter:
     - assets/images/logos/
     - assets/images/backgrounds/
     - assets/images/kakao/
+    - assets/images/google/
     - assets/images/profile_pictures/
 
   # An image asset can refer to one or more resolution-specific "variants", see
