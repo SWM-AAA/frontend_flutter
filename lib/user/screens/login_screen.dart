@@ -96,6 +96,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       oAuthLoginPressed(API.kakaoLogin);
     }
 
+    void onGoolgleLoginButtonClick() {
+      oAuthLoginPressed(API.googleLogin);
+    }
+
     return DefaultLayout(
       backgroundDecorationImage: const DecorationImage(
         fit: BoxFit.cover,
@@ -116,18 +120,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             children: [
               Expanded(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    const AnimatedAppName(),
                     const SizedBox(
-                      height: 82.0,
+                      height: 10,
                     ),
-                    KakaoLoginButton(
-                      onPressed: onKakaoLoginButtonClick,
-                    ),
-                    GoogleLoginButton(
-                      onPressed: onKakaoLoginButtonClick,
-                    ),
+                    const AnimatedAppName(),
+                    Column(
+                      children: [
+                        KakaoLoginButton(
+                          onPressed: onKakaoLoginButtonClick,
+                        ),
+                        GoogleLoginButton(
+                          onPressed: onKakaoLoginButtonClick,
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),
