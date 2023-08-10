@@ -10,6 +10,7 @@ import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
 import 'package:frontend/common/screens/root_tab.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
+import 'package:frontend/user/components/basic_login_button.dart';
 import 'package:frontend/user/components/kakao_login_button.dart';
 import 'package:frontend/user/screens/register_dialog_screen.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
@@ -120,6 +121,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(
                       height: 12.0,
                     ),
+
                     KakaoLoginButton(
                       onPressed: showRegisterDialog,
                     ),

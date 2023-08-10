@@ -14,7 +14,7 @@
 
 
     <application
-        android:label="frontend"
+        android:label="Zeppy"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <!--For Oauth redirect uri-->
