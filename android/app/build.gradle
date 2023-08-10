@@ -30,6 +30,14 @@ def googleMapApiKey = localProperties.getProperty('google.map.key')
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+// for release sign
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('./app/key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withReader('UTF-8') { reader ->
+        keystoreProperties.load(reader)
+    }
+}
 
 android {
     namespace "com.aaa.frontend"
@@ -62,12 +70,25 @@ android {
         manifestPlaceholders["kakaoNativeAppKey"] = kakaoNativeAppKey
         manifestPlaceholders["googleMapApiKey"] = googleMapApiKey
     }
-
+    // start of signingConfigs
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties.getProperty('keyAlias')
+            keyPassword keystoreProperties.getProperty('keyPassword')
+            storeFile file(keystoreProperties.getProperty('storeFile'))
+            storePassword keystoreProperties.getProperty('storePassword')
+        }
+    }
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
+            // start of 코드난독화 및 사이즈 축소
+            // minifyEnabled true
+            // useProguard true
+            // proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            
         }
     }
 }
