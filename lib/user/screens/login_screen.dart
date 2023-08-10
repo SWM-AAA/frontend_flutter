@@ -15,6 +15,7 @@ import 'package:frontend/user/components/google_login_button.dart';
 import 'package:frontend/user/components/kakao_login_button.dart';
 import 'package:frontend/user/screens/register_dialog_screen.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:logger/logger.dart';
 
 import '../../common/consts/data.dart';
 import '../utils/oauth_apis.dart';
@@ -70,8 +71,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     Future<void> signInOAuth(String api) async {
       try {
+        var logger = Logger();
         final uri = Uri.parse('$api?redirect_url=$APP_SCHEME');
         log(uri.toString());
+
         final webAuthResp = await FlutterWebAuth2.authenticate(
           url: uri.toString(),
           callbackUrlScheme: APP_SCHEME,
@@ -79,10 +82,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
         final accessToken = Uri.parse(webAuthResp).queryParameters[ACCESS_TOKEN_KEY];
         final refreshToken = Uri.parse(webAuthResp).queryParameters[REFRESH_TOKEN_KEY];
+        final isFirstVisit = Uri.parse(webAuthResp).queryParameters[IS_FIRST];
 
         await secureStorage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
         await secureStorage.write(key: REFRESH_TOKEN_KEY, value: refreshToken);
-        moveToRootTab();
+        logger.w(accessToken, "accessToken: $accessToken");
+        logger.w(refreshToken, "refreshToken: $refreshToken");
+        if (isFirstVisit == 'true') {
+          showRegisterDialog();
+        } else {
+          moveToRootTab();
+        }
       } catch (e) {
         log(e.toString());
       }
@@ -96,7 +106,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       oAuthLoginPressed(API.kakaoLogin);
     }
 
-    void onGoolgleLoginButtonClick() {
+    void onGoogleLoginButtonClick() {
       oAuthLoginPressed(API.googleLogin);
     }
 
@@ -132,7 +142,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           onPressed: onKakaoLoginButtonClick,
                         ),
                         GoogleLoginButton(
-                          onPressed: onKakaoLoginButtonClick,
+                          onPressed: onGoogleLoginButtonClick,
                         ),
                       ],
                     )
