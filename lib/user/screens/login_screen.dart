@@ -14,6 +14,7 @@ import 'package:frontend/user/components/basic_login_button.dart';
 import 'package:frontend/user/components/kakao_login_button.dart';
 import 'package:frontend/user/screens/register_dialog_screen.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:logger/logger.dart';
 
 import '../../common/consts/data.dart';
 import '../utils/oauth_apis.dart';
@@ -26,6 +27,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
+  var logger = Logger();
   @override
   Widget build(BuildContext context) {
     final dio = ref.watch(dioProvider);
@@ -78,10 +80,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
         final accessToken = Uri.parse(webAuthResp).queryParameters[ACCESS_TOKEN_KEY];
         final refreshToken = Uri.parse(webAuthResp).queryParameters[REFRESH_TOKEN_KEY];
+        final isFirst = Uri.parse(webAuthResp).queryParameters[IS_FIRST];
+        logger.i(accessToken);
+        logger.i(refreshToken);
+        logger.i(isFirst);
 
         await secureStorage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
         await secureStorage.write(key: REFRESH_TOKEN_KEY, value: refreshToken);
-        moveToRootTab();
+
+        if (isFirst == 'true') {
+          showRegisterDialog();
+        } else {
+          moveToRootTab();
+        }
       } catch (e) {
         log(e.toString());
       }
@@ -121,9 +132,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(
                       height: 12.0,
                     ),
-
                     KakaoLoginButton(
-                      onPressed: showRegisterDialog,
+                      onPressed: onKakaoLoginButtonClick,
                     ),
                   ],
                 ),
