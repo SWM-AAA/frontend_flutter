@@ -6,7 +6,7 @@ class CustomTextForm extends StatelessWidget {
   final bool obscureText;
   final bool autofocus;
   final ValueChanged<String>? onChanged;
-
+  // final Function customValidator;
   const CustomTextForm({
     super.key,
     required this.onChanged,
@@ -14,7 +14,9 @@ class CustomTextForm extends StatelessWidget {
     this.customErrorText,
     this.obscureText = false,
     this.autofocus = true,
+    //  this.customValidator,
   });
+  //  : customValidator = customValidator ?? (){};
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,7 @@ class CustomTextForm extends StatelessWidget {
       cursorColor: Colors.black,
       obscureText: obscureText,
       autofocus: autofocus,
+      // validator: customValidator,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 20.0,

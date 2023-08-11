@@ -112,6 +112,7 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
                     userRealName = value;
                   },
                   customHintText: '이름을 입력해주세요!',
+                  customErrorText: '한글로 2자 이상 6자 이내로 입력해주세요.',
                 ),
               ),
               const SizedBox(
