@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/consts/data.dart';
-import 'package:frontend/custom_map/components/const/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final registeredUserInfoProvider =

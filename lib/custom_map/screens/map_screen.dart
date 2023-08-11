@@ -2,11 +2,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:frontend/custom_map/components/const/data.dart';
-import 'package:frontend/custom_map/components/const/type.dart';
+import 'package:frontend/custom_map/model/type.dart';
 import 'package:frontend/custom_map/components/custom_google_map.dart';
-import 'package:frontend/custom_map/components/marker/custom_marker.dart';
-import 'package:frontend/custom_map/components/marker_icon.dart';
+import 'package:frontend/custom_map/components/marker/google_user_marker.dart';
+import 'package:frontend/custom_map/components/marker/user_marker_icon.dart';
 import 'package:frontend/custom_map/components/test_button/create_init_marker_button.dart';
 import 'package:frontend/custom_map/components/test_button/delete_all_marker_button.dart';
 import 'package:geolocator/geolocator.dart';
@@ -108,17 +107,22 @@ class _MapScreenState extends State<MapScreen> {
 
   // 현재 위치를 표시하는 빨간색 마커, 내 위치를 다른 아이콘으로 표기하고싶을때 사용할것같다.
   void updateMyMarkerPosition(LatLng latLng) async {
+    String userMarkerId = 'I';
+    await updateMarkerLocation(userMarkerId, latLng);
+  }
+
+  Future<void> updateMarkerLocation(String userMarkerId, LatLng latLng) async {
     MarkerInfo markerInfo = MarkerInfo(
-      markerId: 'I',
+      markerId: userMarkerId,
       userName: widget.userName,
       imagePath: widget.userProfileImagePath,
     );
-    Marker newMarker = await createMarker(markerInfo, latLng);
+    Marker newMarker = await googleUserMarker(markerInfo, latLng);
 
     setState(() {
       // markers.removeWhere((element) => element.markerId.value == 'I');
       // markers.add(newMarker);
-      int index = markers.indexWhere((element) => element.markerId.value == 'I');
+      int index = markers.indexWhere((element) => element.markerId.value == userMarkerId);
       if (index != -1) {
         markers[index] = newMarker;
       } else {

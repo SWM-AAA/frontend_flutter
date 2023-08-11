@@ -10,7 +10,7 @@ import 'package:frontend/custom_map/const/marker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 
-Future<BitmapDescriptor> createMarkerIcon(String imagePath, String userName) async {
+Future<BitmapDescriptor> userMarkerIcon(String imagePath, String userName) async {
   final Size size = Size(200, 200);
   final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
 
