@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class KakaoLoginButton extends StatelessWidget {
+class AppleLoginButton extends StatelessWidget {
   final double? width;
   final void Function()? onPressed;
 
-  const KakaoLoginButton({
+  const AppleLoginButton({
     Key? key,
     this.width = 320,
     this.onPressed,
@@ -14,11 +14,11 @@ class KakaoLoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
-      height: 80,
+      height: 60,
       child: IconButton(
         onPressed: onPressed,
         icon: Image.asset(
-          'assets/images/kakao/kakao_login_medium_narrow.png',
+          'assets/images/apple/login_button.png',
         ),
       ),
     );
