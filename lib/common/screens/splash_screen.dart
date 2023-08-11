@@ -34,7 +34,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (_) => const RootTab(),
+            builder: (_) => const LoginScreen(), // TEST : RootTab(), 로그인 테스트를 위해 잠시 변경
           ),
           (route) => false);
     }

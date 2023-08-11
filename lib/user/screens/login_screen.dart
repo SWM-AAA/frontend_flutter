@@ -30,6 +30,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
+  var logger = Logger();
   @override
   Widget build(BuildContext context) {
     final dio = ref.watch(dioProvider);
@@ -84,13 +85,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
         final accessToken = Uri.parse(webAuthResp).queryParameters[ACCESS_TOKEN_KEY];
         final refreshToken = Uri.parse(webAuthResp).queryParameters[REFRESH_TOKEN_KEY];
-        final isFirstVisit = Uri.parse(webAuthResp).queryParameters[IS_FIRST];
+
+        final isFirst = Uri.parse(webAuthResp).queryParameters[IS_FIRST];
+        logger.i(accessToken);
+        logger.i(refreshToken);
+        logger.i(isFirst);
 
         await secureStorage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
         await secureStorage.write(key: REFRESH_TOKEN_KEY, value: refreshToken);
-        logger.w(accessToken, "accessToken: $accessToken");
-        logger.w(refreshToken, "refreshToken: $refreshToken");
-        if (isFirstVisit == 'true') {
+
+        if (isFirst == 'true') {
           showRegisterDialog();
         } else {
           moveToRootTab();
@@ -135,9 +139,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     const SizedBox(
-
                       height: 10,
-
                     ),
                     const AnimatedAppName(),
                     Column(

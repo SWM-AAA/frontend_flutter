@@ -1,12 +1,17 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/components/custom_text_from.dart';
+import 'package:frontend/common/consts/api.dart';
 import 'package:frontend/common/consts/data.dart';
+import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/riverpod/register_dialog_screen.dart';
 import 'package:frontend/common/screens/root_tab.dart';
+import 'package:frontend/common/utils/api.dart';
 import 'package:frontend/user/consts/data.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,21 +28,28 @@ class RegisterDialogScreen extends ConsumerStatefulWidget {
 class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
   String userRealName = '';
   File? userProfileImageFile;
+  String? testSendDataOnlyFicker;
   final ImagePicker picker = ImagePicker();
-
+  final logger = Logger();
   Future pickImage() async {
     try {
       // image picker를 통해 이미지를 선택하고, 선택된 이미지를 가져옴
-      final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+      final XFile? pickedImage = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 30, // 이미지 크기 압축을 위해 퀄리티를 30으로 낮춤.
+      );
       if (pickedImage == null) return;
+      String pathPickedImage = pickedImage.path;
       File? imageFile = File(pickedImage.path);
-      imageFile = await _cropImage(imageFile: imageFile);
+
+      var croppedImageFile = await _cropImage(imageFile: imageFile);
       setState(() {
         // file들의 경로만 받아서 저장
-        userProfileImageFile = imageFile;
+        testSendDataOnlyFicker = pathPickedImage;
+        userProfileImageFile = croppedImageFile;
       });
     } on PlatformException catch (e) {
-      print(e);
+      logger.e(e);
       Navigator.of(context).pop();
     }
   }
@@ -65,6 +77,8 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final dio = ref.watch(dioProvider);
+
     return SingleChildScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       child: SizedBox(
@@ -98,6 +112,7 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
                     userRealName = value;
                   },
                   customHintText: '이름을 입력해주세요!',
+                  // customErrorText: '한글로 2자 이상 6자 이내로 입력해주세요.',
                 ),
               ),
               const SizedBox(
@@ -146,24 +161,10 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
                   ),
                 ),
                 onPressed: () async {
-                  if (userRealName != '') {
-                    ref.read(registeredUserInfoProvider.notifier).setUserName(userRealName);
-                  }
-                  // getting a directory path for saving
-                  if (userProfileImageFile != null) {
-                    final Directory directory = await getApplicationDocumentsDirectory();
-                    final String userProfileImageFilePath = directory.path + '/user_profile_image.png';
-                    final File newImage = await userProfileImageFile!.copy(userProfileImageFilePath);
-                    var logger = Logger();
-                    logger.e(directory);
-                    ref.read(registeredUserInfoProvider.notifier).setUserImage(userProfileImageFilePath);
-                  }
+                  // await postRegisterData(dio);
+                  await saveInputData(context);
 
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (_) => const RootTab(),
-                      ),
-                      (route) => false);
+                  routeRootTab(context);
                 },
                 child: const Text('Zeppy 시작하기'),
               ),
@@ -172,5 +173,52 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> postRegisterData(Dio dio) async {
+    var postName = userRealName == '' ? DEFAULT_USER_NAME : userRealName;
+    var postImageData = testSendDataOnlyFicker ?? MY_PROFILE_DEFAULT_IMAGE_PATH;
+    var formData = FormData.fromMap(
+      {
+        'image': await MultipartFile.fromFile(postImageData),
+        'name': postName,
+      },
+    );
+    try {
+      dio.options.contentType = 'multipart/form-data';
+      dio.options.maxRedirects.isFinite; //??
+      final response = await dio.post(
+        getApi(API.register),
+        data: formData,
+      );
+      logger.i("성공 업로드");
+      logger.w(response.statusCode);
+      logger.w(response.headers);
+      logger.w(response.data);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  void routeRootTab(BuildContext context) {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (_) => const RootTab(),
+        ),
+        (route) => false);
+  }
+
+  Future<void> saveInputData(BuildContext context) async {
+    if (userRealName != '') {
+      ref.read(registeredUserInfoProvider.notifier).setUserName(userRealName);
+    }
+    // getting a directory path for saving
+    if (userProfileImageFile != null) {
+      final Directory directory = await getApplicationDocumentsDirectory();
+      final String userProfileImageFilePath = directory.path + '/user_profile_image.png';
+      final File newImage = await userProfileImageFile!.copy(userProfileImageFilePath);
+      logger.w(directory);
+      ref.read(registeredUserInfoProvider.notifier).setUserImage(userProfileImageFilePath);
+    }
   }
 }
