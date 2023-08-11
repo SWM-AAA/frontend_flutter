@@ -10,10 +10,14 @@ import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
 import 'package:frontend/common/screens/root_tab.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
-import 'package:frontend/user/components/basic_login_button.dart';
+
+import 'package:frontend/user/components/apple_login_button.dart';
+import 'package:frontend/user/components/google_login_button.dart';
+
 import 'package:frontend/user/components/kakao_login_button.dart';
 import 'package:frontend/user/screens/register_dialog_screen.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:logger/logger.dart';
 
 import '../../common/consts/data.dart';
 import '../utils/oauth_apis.dart';
@@ -69,8 +73,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     Future<void> signInOAuth(String api) async {
       try {
+        var logger = Logger();
         final uri = Uri.parse('$api?redirect_url=$APP_SCHEME');
         log(uri.toString());
+
         final webAuthResp = await FlutterWebAuth2.authenticate(
           url: uri.toString(),
           callbackUrlScheme: APP_SCHEME,
@@ -78,10 +84,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
         final accessToken = Uri.parse(webAuthResp).queryParameters[ACCESS_TOKEN_KEY];
         final refreshToken = Uri.parse(webAuthResp).queryParameters[REFRESH_TOKEN_KEY];
+        final isFirstVisit = Uri.parse(webAuthResp).queryParameters[IS_FIRST];
 
         await secureStorage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
         await secureStorage.write(key: REFRESH_TOKEN_KEY, value: refreshToken);
-        moveToRootTab();
+        logger.w(accessToken, "accessToken: $accessToken");
+        logger.w(refreshToken, "refreshToken: $refreshToken");
+        if (isFirstVisit == 'true') {
+          showRegisterDialog();
+        } else {
+          moveToRootTab();
+        }
       } catch (e) {
         log(e.toString());
       }
@@ -93,6 +106,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     void onKakaoLoginButtonClick() {
       oAuthLoginPressed(API.kakaoLogin);
+    }
+
+    void onGoogleLoginButtonClick() {
+      oAuthLoginPressed(API.googleLogin);
     }
 
     return DefaultLayout(
@@ -115,16 +132,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             children: [
               Expanded(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    const AnimatedAppName(),
                     const SizedBox(
-                      height: 12.0,
-                    ),
 
-                    KakaoLoginButton(
-                      onPressed: showRegisterDialog,
+                      height: 10,
+
                     ),
+                    const AnimatedAppName(),
+                    Column(
+                      children: [
+                        KakaoLoginButton(
+                          onPressed: onKakaoLoginButtonClick,
+                        ),
+                        GoogleLoginButton(
+                          onPressed: onGoogleLoginButtonClick,
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),

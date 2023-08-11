@@ -8,6 +8,7 @@ const KAKAO_REFRESH_TOKEN_EXPIRES_AT_KEY = 'KAKAO_REFRESH_TOKEN_EXPIRES_AT';
 // Zeppy Token key
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
+const IS_FIRST = 'is_first';
 
 // ip
 const emulatorIp = '10.0.2.2:3000';
