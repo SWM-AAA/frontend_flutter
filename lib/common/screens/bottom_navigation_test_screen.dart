@@ -61,6 +61,7 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
                 ),
           ElevatedButton(
             onPressed: () async {
+              logger.i("push get button0");
               await testGetApi(dio);
             },
             child: Icon(Icons.search),
@@ -75,7 +76,9 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
             child: Icon(Icons.send),
           ),
           ElevatedButton(
-            onPressed: () async {},
+            onPressed: () {
+              print("push get button2");
+            },
             child: Icon(Icons.delete),
           )
         ],
@@ -88,15 +91,16 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
       final response = await dio.post(
         getApi(API.postLocationAndBattery),
         data: {
-          "latitude": "37.123456",
-          "longitude": "127.123456",
-          "battery": "90",
+          "latitude": "87.123456",
+          "longitude": "87.123456",
+          "battery": "50",
           "isCharging": false,
         },
       );
       logger.i("성공 업로드");
       logger.w(response.statusCode);
       logger.w(response.headers);
+      print(response.headers);
       logger.w(response.data);
     } catch (e) {
       logger.e(e);
@@ -104,7 +108,15 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
   }
 
   Future<void> testGetApi(Dio dio) async {
-    final response = await dio.get("https://www.naver.com");
-    logger.w(response.headers);
+    try {
+      logger.i("get 결과" + getApi(API.getLocationAndBattery));
+
+      final response = await dio.get(getApi(API.getLocationAndBattery));
+      logger.w(response.statusCode);
+      logger.w(response.headers);
+      logger.w(response.data);
+    } catch (e) {
+      logger.e(e);
+    }
   }
 }
