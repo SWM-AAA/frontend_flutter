@@ -6,38 +6,11 @@ part of 'friend_info_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-FriendLocationAndBattery _$FriendLocationAndBatteryFromJson(
-        Map<String, dynamic> json) =>
-    FriendLocationAndBattery(
-      friendInfoList: (json['friendInfoList'] as List<dynamic>)
-          .map((e) => FriendInfoModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
-
-Map<String, dynamic> _$FriendLocationAndBatteryToJson(
-        FriendLocationAndBattery instance) =>
-    <String, dynamic>{
-      'friendInfoList': instance.friendInfoList,
-    };
-
-FriendInfoModel _$FriendInfoModelFromJson(Map<String, dynamic> json) =>
-    FriendInfoModel(
-      userNameTag: json['userNameTag'] as String,
-      liveInfo:
-          LiveInfoModel.fromJson(json['liveInfo'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$FriendInfoModelToJson(FriendInfoModel instance) =>
-    <String, dynamic>{
-      'userNameTag': instance.userNameTag,
-      'liveInfo': instance.liveInfo,
-    };
-
 LiveInfoModel _$LiveInfoModelFromJson(Map<String, dynamic> json) =>
     LiveInfoModel(
-      longitude: (json['longitude'] as num).toDouble(),
-      latitude: (json['latitude'] as num).toDouble(),
-      battery: json['battery'] as int,
+      longitude: json['longitude'] as String,
+      latitude: json['latitude'] as String,
+      battery: json['battery'] as String,
       isCharging: json['isCharging'] as bool,
     );
 
