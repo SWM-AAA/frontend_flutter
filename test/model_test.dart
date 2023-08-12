@@ -32,7 +32,7 @@ void main() {
 
     final parsedJson = jsonDecode(json);
 
-    final model = FriendLocationAndBattery.fromJson(json: parsedJson);
+    final model = FriendLocationAndBattery.fromJson(parsedJson);
 
     expect(model.friendInfoList, isA<List<FriendInfoModel>>());
     expect(model.friendInfoList.length, parsedJson['result'].length);

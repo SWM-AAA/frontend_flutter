@@ -12,14 +12,12 @@ class FriendLocationAndBattery {
     required this.friendInfoList,
   });
 
-  factory FriendLocationAndBattery.fromJson({
-    required Map<String, dynamic> json,
-  }) {
+  factory FriendLocationAndBattery.fromJson(Map<String, dynamic> json) {
     final List<FriendInfoModel> friendInfoList = [];
     json['result'].forEach(
       (key, value) {
         final friendInfo = FriendInfoModel.fromJson(
-          json: {key: value},
+          {key: value},
         );
         friendInfoList.add(friendInfo);
       },
@@ -38,9 +36,7 @@ class FriendInfoModel {
     required this.liveInfo,
   });
 
-  factory FriendInfoModel.fromJson({
-    required Map<String, dynamic> json,
-  }) {
+  factory FriendInfoModel.fromJson(Map<String, dynamic> json) {
     return FriendInfoModel(
       userNameTag: json.keys.first,
       liveInfo: LiveInfoModel.fromJson(json.values.first),
