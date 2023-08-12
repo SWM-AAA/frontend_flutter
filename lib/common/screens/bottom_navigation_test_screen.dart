@@ -80,7 +80,31 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
               print("push get button2");
             },
             child: Icon(Icons.delete),
-          )
+          ),
+          FutureBuilder(
+            future: testGetApi(dio),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              } else if (snapshot.hasData) {
+                return ListView.separated(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (_, index) {
+                    final item = snapshot.data![index];
+                    // 아이템
+                    return Text("${item.toString()}");
+                  },
+                  separatorBuilder: (_, index) {
+                    // 아이템 사이사이
+                    return SizedBox(
+                      height: 10,
+                    );
+                  },
+                );
+              }
+              return CircularProgressIndicator();
+            },
+          ),
         ],
       ),
     );
@@ -107,7 +131,7 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
     }
   }
 
-  Future<void> testGetApi(Dio dio) async {
+  Future testGetApi(Dio dio) async {
     try {
       logger.i("get 결과" + getApi(API.getLocationAndBattery));
 
@@ -115,8 +139,10 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
       logger.w(response.statusCode);
       logger.w(response.headers);
       logger.w(response.data);
+      return response.data['result'];
     } catch (e) {
       logger.e(e);
+      return null;
     }
   }
 }
