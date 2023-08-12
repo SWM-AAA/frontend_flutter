@@ -10,8 +10,11 @@ import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/riverpod/register_dialog_screen.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
 import 'package:frontend/common/utils/api.dart';
+import 'package:frontend/custom_map/model/friend_info_model.dart';
+import 'package:frontend/custom_map/repository/live_info_repository.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class BottomNavigationTestScreen extends ConsumerStatefulWidget {
   final String testScreenName;
@@ -81,16 +84,16 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
             },
             child: Icon(Icons.delete),
           ),
-          FutureBuilder(
+          FutureBuilder<FriendLocationAndBattery>(
             future: testGetApi(dio),
-            builder: (context, AsyncSnapshot snapshot) {
+            builder: (context, AsyncSnapshot<FriendLocationAndBattery> snapshot) {
               if (snapshot.hasError) {
                 return Text("${snapshot.error}");
               } else if (snapshot.hasData) {
                 return ListView.separated(
-                  itemCount: snapshot.data!.length,
+                  itemCount: snapshot.data!.friendInfoList.length,
                   itemBuilder: (_, index) {
-                    final item = snapshot.data![index];
+                    final item = snapshot.data!.friendInfoList[index];
                     // 아이템
                     return Text("${item.toString()}");
                   },
@@ -131,18 +134,21 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
     }
   }
 
-  Future testGetApi(Dio dio) async {
-    try {
-      logger.i("get 결과" + getApi(API.getLocationAndBattery));
+  Future<FriendLocationAndBattery> testGetApi(Dio dio) async {
+    // try {
+    //   logger.i("get 결과" + getApi(API.getLocationAndBattery));
 
-      final response = await dio.get(getApi(API.getLocationAndBattery));
-      logger.w(response.statusCode);
-      logger.w(response.headers);
-      logger.w(response.data);
-      return response.data['result'];
-    } catch (e) {
-      logger.e(e);
-      return null;
-    }
+    //   final response = await dio.get(getApi(API.getLocationAndBattery));
+    //   logger.w(response.statusCode);
+    //   logger.w(response.headers);
+    //   logger.w(response.data);
+    //   return response.data['result'];
+    // } catch (e) {
+    //   logger.e(e);
+    //   return null;
+    // }
+    // TODO: baseUrl을 안쓰며느 dio의 기본 baseUrl로 설정되는데, 그거 나중에 설정하기
+    final repository = LiveInfoRepository(dio, baseUrl: dotenv.env['AAA_PUBLIC_API_BASE'].toString());
+    return repository.getFriendLocationAndBattery();
   }
 }
