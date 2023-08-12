@@ -1,3 +1,5 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 enum API {
   // user
   register,
@@ -13,3 +15,4 @@ Map<API, String> apiMap = {
   API.postLocationAndBattery: '/api/v1/users/location-and-battery',
   API.getLocationAndBattery: '/api/v1/users/all-user-location-and-battery',
 };
+String BASE_URL = dotenv.env['AAA_PUBLIC_API_BASE'].toString();

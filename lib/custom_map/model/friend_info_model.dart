@@ -46,9 +46,9 @@ class FriendInfoModel {
 
 @JsonSerializable()
 class LiveInfoModel {
-  late String longitude;
-  late String latitude;
-  late String battery;
+  late double longitude;
+  late double latitude;
+  late int battery;
   late bool isCharging;
   LiveInfoModel({
     required this.longitude,

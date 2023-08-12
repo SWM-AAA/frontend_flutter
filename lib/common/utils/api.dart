@@ -1,11 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/common/consts/api.dart';
 import 'package:logger/logger.dart';
 
-String baseUrl = dotenv.env['AAA_PUBLIC_API_BASE'].toString();
 String getApi(API apiType) {
-  String api = baseUrl;
+  String api = BASE_URL;
   api += apiMap[apiType]!;
   return api;
 }

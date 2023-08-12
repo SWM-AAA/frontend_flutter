@@ -8,9 +8,9 @@ part of 'friend_info_model.dart';
 
 LiveInfoModel _$LiveInfoModelFromJson(Map<String, dynamic> json) =>
     LiveInfoModel(
-      longitude: json['longitude'] as String,
-      latitude: json['latitude'] as String,
-      battery: json['battery'] as String,
+      longitude: (json['longitude'] as num).toDouble(),
+      latitude: (json['latitude'] as num).toDouble(),
+      battery: json['battery'] as int,
       isCharging: json['isCharging'] as bool,
     );
 

@@ -84,29 +84,43 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
             },
             child: Icon(Icons.delete),
           ),
-          FutureBuilder<FriendLocationAndBattery>(
-            future: testGetApi(dio),
-            builder: (context, AsyncSnapshot<FriendLocationAndBattery> snapshot) {
-              if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              } else if (snapshot.hasData) {
-                return ListView.separated(
-                  itemCount: snapshot.data!.friendInfoList.length,
-                  itemBuilder: (_, index) {
-                    final item = snapshot.data!.friendInfoList[index];
-                    // 아이템
-                    return Text("${item.toString()}");
-                  },
-                  separatorBuilder: (_, index) {
-                    // 아이템 사이사이
-                    return SizedBox(
-                      height: 10,
-                    );
-                  },
-                );
-              }
-              return CircularProgressIndicator();
-            },
+          Expanded(
+            child: FutureBuilder<FriendLocationAndBattery>(
+              future: testGetApi(dio),
+              builder: (context, AsyncSnapshot<FriendLocationAndBattery> snapshot) {
+                if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                } else if (snapshot.hasData) {
+                  return ListView.separated(
+                    itemCount: snapshot.data!.friendInfoList.length,
+                    itemBuilder: (_, index) {
+                      final item = snapshot.data!.friendInfoList[index];
+                      // 아이템
+                      return Row(
+                        children: [
+                          Text("${item.userNameTag}"),
+                          SizedBox(width: 10),
+                          Text("${item.liveInfo.latitude}"),
+                          SizedBox(width: 10),
+                          Text("${item.liveInfo.longitude}"),
+                          SizedBox(width: 10),
+                          Text("${item.liveInfo.battery}"),
+                          SizedBox(width: 10),
+                          Text("${item.liveInfo.isCharging}"),
+                        ],
+                      );
+                    },
+                    separatorBuilder: (_, index) {
+                      // 아이템 사이사이
+                      return SizedBox(
+                        height: 10,
+                      );
+                    },
+                  );
+                }
+                return CircularProgressIndicator();
+              },
+            ),
           ),
         ],
       ),
@@ -148,7 +162,7 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
     //   return null;
     // }
     // TODO: baseUrl을 안쓰며느 dio의 기본 baseUrl로 설정되는데, 그거 나중에 설정하기
-    final repository = LiveInfoRepository(dio, baseUrl: dotenv.env['AAA_PUBLIC_API_BASE'].toString());
-    return repository.getFriendLocationAndBattery();
+
+    return ref.watch(liveInfoRepositoryProvider).getFriendLocationAndBattery();
   }
 }
