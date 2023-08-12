@@ -39,7 +39,7 @@ class CustomInterceptor extends Interceptor {
     final accessToken = await secureStorage.read(key: ACCESS_TOKEN_KEY);
 
     options.headers.addAll({
-      'authorization': 'Bearer $accessToken',
+      'Authorization': 'Bearer $accessToken',
     });
 
     // refresh 토큰 자동 적용
@@ -49,7 +49,7 @@ class CustomInterceptor extends Interceptor {
     final refreshToken = await secureStorage.read(key: REFRESH_TOKEN_KEY);
 
     options.headers.addAll({
-      'authorization': 'Bearer $refreshToken',
+      'Authorization-refresh': 'Bearer $refreshToken',
     });
 
     super.onRequest(options, handler);
