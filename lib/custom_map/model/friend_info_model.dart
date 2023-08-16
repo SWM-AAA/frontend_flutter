@@ -44,7 +44,6 @@ class FriendInfoModel {
   }
 }
 
-@JsonSerializable()
 class LiveInfoModel {
   late double longitude;
   late double latitude;
@@ -56,17 +55,12 @@ class LiveInfoModel {
     required this.battery,
     required this.isCharging,
   });
-  factory LiveInfoModel.fromJson(Map<String, dynamic> json) => _$LiveInfoModelFromJson(json);
-  Map<String, dynamic> toJson() => _$LiveInfoModelToJson(this);
-
-  // factory LiveInfoModel.fromJson({
-  //   required Map<String, dynamic> json,
-  // }) {
-  //   return LiveInfoModel(
-  //     longitude: json['longitude'],
-  //     latitude: json['latitude'],
-  //     battery: json['battery'],
-  //     isCharging: json['isCharging'],
-  //   );
-  // }
+  factory LiveInfoModel.fromJson(Map<String, dynamic> json) {
+    return LiveInfoModel(
+      longitude: double.tryParse(json["longitude"]) ?? 0.0,
+      latitude: double.tryParse(json["latitude"]) ?? 0.0,
+      battery: int.tryParse(json["battery"]) ?? 0,
+      isCharging: json['isCharging'],
+    );
+  }
 }
