@@ -11,8 +11,10 @@ import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/riverpod/register_dialog_screen.dart';
 import 'package:frontend/common/screens/root_tab.dart';
+import 'package:frontend/common/secure_storage/secure_storage.dart';
 import 'package:frontend/common/utils/api.dart';
 import 'package:frontend/user/consts/data.dart';
+import 'package:frontend/user/model/access_key_model.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
@@ -78,6 +80,7 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
   @override
   Widget build(BuildContext context) {
     final dio = ref.watch(dioProvider);
+    final secureStorage = ref.watch(secureStorageProvider);
 
     return SingleChildScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -161,7 +164,7 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
                   ),
                 ),
                 onPressed: () async {
-                  // await postRegisterData(dio);
+                  await postRegisterData(dio, secureStorage);
                   await saveInputData(context);
 
                   routeRootTab(context);
@@ -175,15 +178,13 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
     );
   }
 
-  Future<void> postRegisterData(Dio dio) async {
+  Future<void> postRegisterData(Dio dio, secureStorage) async {
     var postName = userRealName == '' ? DEFAULT_USER_NAME : userRealName;
-    var postImageData = testSendDataOnlyFicker ?? MY_PROFILE_DEFAULT_IMAGE_PATH;
+    var postImageData = testSendDataOnlyFicker ?? 'assets/images/profile_pictures/default_profile.png';
     var formData = FormData.fromMap(
       {
-
         'profileimage': await MultipartFile.fromFile(postImageData),
         'nickname': postName,
-
       },
     );
     try {
@@ -193,10 +194,9 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
         getApi(API.register),
         data: formData,
       );
-      logger.i("성공 업로드");
-      logger.w(response.statusCode);
-      logger.w(response.headers);
-      logger.w(response.data);
+      logger.i("postRegisterData 성공 업로드");
+      var updatedAccessKeyModel = UpdatedAccessKeyModel.fromJson(response.data);
+      await secureStorage.write(key: ACCESS_TOKEN_KEY, value: updatedAccessKeyModel.access_token);
     } catch (e) {
       logger.e(e);
     }
@@ -219,7 +219,7 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
       final Directory directory = await getApplicationDocumentsDirectory();
       final String userProfileImageFilePath = directory.path + '/user_profile_image.png';
       final File newImage = await userProfileImageFile!.copy(userProfileImageFilePath);
-      logger.w(directory);
+      // logger.w(directory);
       ref.read(registeredUserInfoProvider.notifier).setUserImage(userProfileImageFilePath);
     }
   }
