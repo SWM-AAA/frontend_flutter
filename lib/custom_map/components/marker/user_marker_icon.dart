@@ -139,6 +139,7 @@ Future<void> paintProfileImage(Size size, Canvas canvas, String imagePath) async
 }
 
 Future<ui.Image> getImageFromPath(String imagePath) async {
+  var logger = Logger();
   try {
     final Completer<ui.Image> completer = Completer();
     File imageFile = File(imagePath);
@@ -148,8 +149,14 @@ Future<ui.Image> getImageFromPath(String imagePath) async {
       uint8listData = imageFile.readAsBytesSync();
     } else {
       // Handle the case when the file does not exist
-      final ByteData byteData = await rootBundle.load(MY_PROFILE_DEFAULT_IMAGE_PATH);
-      uint8listData = byteData.buffer.asUint8List();
+      logger.w(imagePath, "Image file does not exist");
+      try {
+        final ByteData byteData = await rootBundle.load(imagePath);
+        uint8listData = byteData.buffer.asUint8List();
+      } catch (e) {
+        final ByteData byteData = await rootBundle.load(MY_PROFILE_DEFAULT_IMAGE_PATH);
+        uint8listData = byteData.buffer.asUint8List();
+      }
     }
 
     // ui.decodeImageFromList(byteData.buffer.asUint8List(), (ui.Image img) {

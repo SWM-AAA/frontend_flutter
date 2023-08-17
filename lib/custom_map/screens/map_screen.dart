@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/consts/api.dart';
 import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/utils/api.dart';
-import 'package:frontend/custom_map/model/type.dart';
+import 'package:frontend/custom_map/model/marker_static_info_model.dart';
 import 'package:frontend/custom_map/components/custom_google_map.dart';
 import 'package:frontend/custom_map/components/marker/google_user_marker.dart';
 import 'package:frontend/custom_map/components/marker/user_marker_icon.dart';
@@ -70,23 +70,14 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
     //   postMyLocation(position);
     // });
     //Starting the animation after 1 second.
-    Future.delayed(const Duration(seconds: 1)).then((value) {
-      animateCar(
-        37.540853,
-        127.078971,
-        37.550853,
-        127.068971,
-        mapMarkerSink,
-        this,
-        googleMapController,
-      );
-    });
+    // test init markers
+    initTestUserMarkers();
   }
 
   @override
   void dispose() {
     // 끝날때 스트리밍 종료
-    positionStream.cancel();
+    // positionStream.cancel();
     super.dispose();
   }
 
@@ -161,8 +152,6 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
     Marker newMarker = await googleUserMarker(markerInfo, latLng);
 
     setState(() {
-      // markers.removeWhere((element) => element.markerId.value == 'I');
-      // markers.add(newMarker);
       int index = markers.indexWhere((element) => element.markerId.value == userMarkerId);
       if (index != -1) {
         markers[index] = newMarker;
@@ -175,7 +164,6 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
   final mapMarkerStreamController = StreamController<List<Marker>>();
   StreamSink<List<Marker>> get mapMarkerSink => mapMarkerStreamController.sink;
   Stream<List<Marker>> get mapMarkerStream => mapMarkerStreamController.stream;
-  Animation<double>? _animation;
 
   @override
   Widget build(BuildContext context) {
@@ -183,107 +171,66 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
       children: [
         Expanded(
           // height: 400,
-          child: StreamBuilder<List<Marker>>(
-            stream: mapMarkerStream,
-            builder: (context, snapshot) {
-              return CustomGoogleMap(
-                initCameraPosition: initCameraPosition,
-                markers: snapshot.data ?? markers,
-                updateControllerOnMapCreated: (GoogleMapController controller) {
-                  setState(() {
-                    googleMapController = controller;
-                  });
-                },
-                onCameraMove: (CameraPosition cameraPosition) {
-                  setState(() {
-                    cameraZoom = cameraPosition.zoom;
-                  });
-                },
-              );
+          child:
+              // StreamBuilder<List<Marker>>(
+              //   stream: mapMarkerStream,
+              //   builder: (context, snapshot) {
+              //     return
+              CustomGoogleMap(
+            initCameraPosition: initCameraPosition,
+            markers: markers,
+            // markers: snapshot.data ?? markers,
+            updateControllerOnMapCreated: (GoogleMapController controller) {
+              setState(() {
+                googleMapController = controller;
+              });
             },
+            onCameraMove: (CameraPosition cameraPosition) {
+              setState(() {
+                cameraZoom = cameraPosition.zoom;
+              });
+            },
+            // );
+            // },
           ),
         ),
       ],
     );
   }
 
-  setUpMarker() async {
-    const currentLocationCamera = LatLng(37.42796133580664, -122.085749655962);
-    MarkerInfo markerInfo = MarkerInfo(
-      markerId: currentLocationCamera.latitude.toString(),
-      userName: widget.userName,
-      imagePath: widget.userProfileImagePath,
-    );
-    Marker pickupMarker = await googleUserMarker(
-      markerInfo,
-      LatLng(currentLocationCamera.latitude, currentLocationCamera.longitude),
-    );
+  Future<void> initTestUserMarkers() async {
+    List<MarkerInfo> markerInfoList = [
+      MarkerInfo(
+        markerId: 'user_1',
+        userName: '휘서',
+        imagePath: 'assets/images/profile_pictures/user_profile.jpeg',
+      ),
+      MarkerInfo(
+        markerId: 'user_2',
+        userName: '쯔위',
+        imagePath: 'assets/images/profile_pictures/user_2_profile.png',
+      ),
+      MarkerInfo(
+        markerId: 'user_3',
+        userName: '지호',
+        imagePath: 'assets/images/profile_pictures/user_3_profile.png',
+      ),
+    ];
 
-    //Adding a delay and then showing the marker on screen
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    markers.add(pickupMarker);
-    mapMarkerSink.add(markers);
-  }
-
-  animateCar(
-    double fromLat, //Starting latitude
-    double fromLong, //Starting longitude
-    double toLat, //Ending latitude
-    double toLong, //Ending longitude
-    StreamSink<List<Marker>> mapMarkerSink, //Stream build of map to update the UI
-    TickerProvider provider, //Ticker provider of the widget. This is used for animation
-    GoogleMapController controller, //Google map controller of our widget
-  ) async {
-    markers.clear();
-    MarkerInfo markerInfo = MarkerInfo(
-      markerId: "driverMarker",
-      userName: widget.userName,
-      imagePath: widget.userProfileImagePath,
-    );
-    Marker carMarker = await googleUserMarker(
-      markerInfo,
-      LatLng(fromLat, fromLong),
-      // anchor: const Offset(0.5, 0.5),
-    );
-
-    //Adding initial marker to the start location.
-    markers.add(carMarker);
-    mapMarkerSink.add(markers);
-
-    final animationController = AnimationController(
-      duration: const Duration(seconds: 3), //Animation duration of marker
-      vsync: provider, //From the widget
-    );
-
-    Tween<double> tween = Tween(begin: 0, end: 3);
-
-    _animation = tween.animate(animationController)
-      ..addListener(() async {
-        //We are calculating new latitude and logitude for our marker
-        final v = _animation!.value;
-        double lng = v * toLong + (1 - v) * fromLong;
-        double lat = v * toLat + (1 - v) * fromLat;
-        LatLng newPos = LatLng(lat, lng);
-
-        //Removing old marker if present in the marker array
-        if (markers.contains(carMarker)) markers.remove(carMarker);
-
-        //New marker location
-        carMarker = await googleUserMarker(
-          markerInfo,
-          newPos,
-          // anchor: const Offset(0.5, 0.5),
-        );
-        //Adding new marker to our list and updating the google map UI.
-        markers.add(carMarker);
-        mapMarkerSink.add(markers);
-
-        //Moving the google camera to the new animated location.
-        // controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: newPos, zoom: 15.5)));
+    for (var userMarkerInfo in markerInfoList) {
+      double move_lat = (Random().nextInt(21) - 10) / 1000;
+      double move_lng = (Random().nextInt(21) - 10) / 1000;
+      Marker thisMarker = await googleUserMarker(
+        MarkerInfo(
+          markerId: userMarkerInfo.markerId,
+          userName: userMarkerInfo.userName,
+          imagePath: userMarkerInfo.imagePath,
+        ),
+        LatLng(37.540853 + move_lat, 127.078971 + move_lng),
+      );
+      setState(() {
+        markers.add(thisMarker);
       });
-
-    //Starting the animation
-    animationController.forward();
+    }
   }
 }
