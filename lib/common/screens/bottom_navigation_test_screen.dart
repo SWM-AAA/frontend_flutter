@@ -11,6 +11,7 @@ import 'package:frontend/common/riverpod/register_dialog_screen.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
 import 'package:frontend/common/utils/api.dart';
 import 'package:frontend/custom_map/model/friend_info_model.dart';
+import 'package:frontend/custom_map/provider/live_info_provider.dart';
 import 'package:frontend/custom_map/repository/live_info_repository.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
@@ -41,7 +42,12 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
     final userProfileImagePathWatch = ref.watch(registeredUserInfoProvider).userProfileImagePath;
     final dio = ref.watch(dioProvider);
     final secureStorage = ref.watch(secureStorageProvider);
-
+    final liveInfoData = ref.watch(liveInfoProvider);
+    // if (liveInfoData.length == 0) {
+    //   return Center(
+    //     child: CircularProgressIndicator(),
+    //   );
+    // }
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Column(
@@ -95,6 +101,7 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
                     itemCount: snapshot.data!.friendInfoList.length,
                     itemBuilder: (_, index) {
                       final item = snapshot.data!.friendInfoList[index];
+                      logger.w(item);
                       // 아이템
                       return Row(
                         children: [
