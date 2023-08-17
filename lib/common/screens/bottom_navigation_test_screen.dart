@@ -19,6 +19,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+
 class BottomNavigationTestScreen extends ConsumerStatefulWidget {
   final String? testScreenName;
   const BottomNavigationTestScreen({
@@ -44,12 +45,14 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
     final userProfileImagePathWatch = ref.watch(registeredUserInfoProvider).userProfileImagePath;
     final dio = ref.watch(dioProvider);
     final secureStorage = ref.watch(secureStorageProvider);
+
     final liveInfoData = ref.watch(liveInfoProvider);
     // if (liveInfoData.length == 0) {
     //   return Center(
     //     child: CircularProgressIndicator(),
     //   );
     // }
+
 
     return SizedBox(
       width: MediaQuery.of(context).size.width,
@@ -92,6 +95,7 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
               print("push get button2");
             },
             child: Icon(Icons.delete),
+
           ),
           Expanded(
             child: FutureBuilder<FriendLocationAndBattery>(
@@ -132,6 +136,7 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
               },
             ),
           ),
+
         ],
       ),
     );
@@ -174,5 +179,6 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
     // TODO: baseUrl을 안쓰며느 dio의 기본 baseUrl로 설정되는데, 그거 나중에 설정하기
 
     return ref.watch(liveInfoRepositoryProvider).getFriendLocationAndBattery();
+
   }
 }

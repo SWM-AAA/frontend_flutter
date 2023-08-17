@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
+
 import 'package:frontend/common/consts/api.dart';
 import 'package:logger/logger.dart';
 
 String getApi(API apiType) {
   String api = BASE_URL;
+
   api += apiMap[apiType]!;
   return api;
 }

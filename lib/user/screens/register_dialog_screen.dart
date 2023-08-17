@@ -180,8 +180,10 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
     var postImageData = testSendDataOnlyFicker ?? MY_PROFILE_DEFAULT_IMAGE_PATH;
     var formData = FormData.fromMap(
       {
+
         'profileimage': await MultipartFile.fromFile(postImageData),
         'nickname': postName,
+
       },
     );
     try {
