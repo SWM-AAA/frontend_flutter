@@ -1,18 +1,17 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/consts/api.dart';
 import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/utils/api.dart';
+import 'package:frontend/custom_map/components/test_button/update_markers_button.dart';
+import 'package:frontend/custom_map/model/friend_info_model.dart';
 import 'package:frontend/custom_map/model/marker_static_info_model.dart';
 import 'package:frontend/custom_map/components/custom_google_map.dart';
 import 'package:frontend/custom_map/components/marker/google_user_marker.dart';
-import 'package:frontend/custom_map/components/marker/user_marker_icon.dart';
 import 'package:frontend/custom_map/components/test_button/create_init_marker_button.dart';
-import 'package:frontend/custom_map/components/test_button/delete_all_marker_button.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
@@ -31,7 +30,7 @@ class MapScreen extends ConsumerStatefulWidget {
   ConsumerState<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateMixin {
+class _MapScreenState extends ConsumerState<MapScreen> {
   // 로그관리를 위한 변수
   var logger = Logger();
   late Future<Position> currentLocation;
@@ -161,22 +160,12 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
     });
   }
 
-  final mapMarkerStreamController = StreamController<List<Marker>>();
-  StreamSink<List<Marker>> get mapMarkerSink => mapMarkerStreamController.sink;
-  Stream<List<Marker>> get mapMarkerStream => mapMarkerStreamController.stream;
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Expanded(
-          // height: 400,
-          child:
-              // StreamBuilder<List<Marker>>(
-              //   stream: mapMarkerStream,
-              //   builder: (context, snapshot) {
-              //     return
-              CustomGoogleMap(
+          child: CustomGoogleMap(
             initCameraPosition: initCameraPosition,
             markers: markers,
             // markers: snapshot.data ?? markers,
@@ -190,10 +179,30 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
                 cameraZoom = cameraPosition.zoom;
               });
             },
-            // );
-            // },
           ),
         ),
+        UpdateMarkersButton(
+          updateMarkerLocation: (friendLiveInfoList) {
+            setState(() {
+              for (FriendInfoModel newFriendLiveInfo in friendLiveInfoList) {
+                int index = markers.indexWhere(
+                  (element) => element.markerId.value == newFriendLiveInfo.userId,
+                );
+                if (index != -1) {
+                  LatLng newLatLng = LatLng(
+                    newFriendLiveInfo.liveInfo.latitude,
+                    newFriendLiveInfo.liveInfo.longitude,
+                  );
+                  if (markers[index].position != newLatLng) {
+                    markers[index] = markers[index].copyWith(positionParam: newLatLng);
+                  }
+                } else {
+                  // markers.add(newMarker);
+                }
+              }
+            });
+          },
+        )
       ],
     );
   }
@@ -211,7 +220,7 @@ class _MapScreenState extends ConsumerState<MapScreen> with TickerProviderStateM
         imagePath: 'assets/images/profile_pictures/user_2_profile.png',
       ),
       MarkerInfo(
-        markerId: 'user_3',
+        markerId: 'user_4',
         userName: '지호',
         imagePath: 'assets/images/profile_pictures/user_3_profile.png',
       ),
