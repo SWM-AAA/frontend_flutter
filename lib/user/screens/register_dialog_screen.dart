@@ -180,26 +180,48 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
 
   Future<void> postRegisterData(Dio dio, secureStorage) async {
     var postName = userRealName == '' ? DEFAULT_USER_NAME : userRealName;
-    var postImageData = testSendDataOnlyFicker ?? 'assets/images/profile_pictures/default_profile.png';
-    var formData = FormData.fromMap(
-      {
-        'profileimage': await MultipartFile.fromFile(postImageData),
-        'nickname': postName,
-      },
-    );
+    var postImageData = userProfileImageFile != null
+        ? await MultipartFile.fromFile(userProfileImageFile!.path, filename: userProfileImageFile!.path.split('/').last)
+        : await getFileFromAssets('assets/images/profile_pictures/default_profile.png');
+    // var postImageData = userProfileImageFile != null
+    //     ? userProfileImageFile!.path
+    //     : 'assets/images/profile_pictures/default_profile.png';
+
     try {
+      var formData = FormData.fromMap(
+        {
+          'profileimage': postImageData,
+          'nickname': postName,
+        },
+      );
       dio.options.contentType = 'multipart/form-data';
       dio.options.maxRedirects.isFinite;
       final response = await dio.post(
         getApi(API.register),
         data: formData,
+        // options.contentType: 'multipart/form-data',
       );
+      logger.w("postRegisterData response : ${response.data}");
       var updatedAccessKeyModel = UpdatedAccessKeyModel.fromJson(response.data);
       await secureStorage.write(key: ACCESS_TOKEN_KEY, value: updatedAccessKeyModel.access_token);
       dio.options.contentType = 'application/json';
     } catch (e) {
       logger.e(e);
     }
+  }
+
+  Future<MultipartFile> getFileFromAssets(String assetPath) async {
+    Uint8List imageBytes = await loadAssetImage(assetPath);
+    String fileName = assetPath.split('/').last;
+    return MultipartFile.fromBytes(
+      imageBytes,
+      filename: fileName,
+    );
+  }
+
+  Future<Uint8List> loadAssetImage(String assetPath) async {
+    final ByteData data = await rootBundle.load(assetPath);
+    return data.buffer.asUint8List();
   }
 
   void routeRootTab(BuildContext context) {
