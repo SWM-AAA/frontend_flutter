@@ -189,14 +189,14 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
     );
     try {
       dio.options.contentType = 'multipart/form-data';
-      dio.options.maxRedirects.isFinite; //??
+      dio.options.maxRedirects.isFinite;
       final response = await dio.post(
         getApi(API.register),
         data: formData,
       );
-      logger.i("postRegisterData 성공 업로드");
       var updatedAccessKeyModel = UpdatedAccessKeyModel.fromJson(response.data);
       await secureStorage.write(key: ACCESS_TOKEN_KEY, value: updatedAccessKeyModel.access_token);
+      dio.options.contentType = 'application/json';
     } catch (e) {
       logger.e(e);
     }
@@ -214,12 +214,11 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
     if (userRealName != '') {
       ref.read(registeredUserInfoProvider.notifier).setUserName(userRealName);
     }
-    // getting a directory path for saving
+
     if (userProfileImageFile != null) {
       final Directory directory = await getApplicationDocumentsDirectory();
       final String userProfileImageFilePath = directory.path + '/user_profile_image.png';
       final File newImage = await userProfileImageFile!.copy(userProfileImageFilePath);
-      // logger.w(directory);
       ref.read(registeredUserInfoProvider.notifier).setUserImage(userProfileImageFilePath);
     }
   }
