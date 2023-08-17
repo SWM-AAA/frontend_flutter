@@ -19,7 +19,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-
 class BottomNavigationTestScreen extends ConsumerStatefulWidget {
   final String? testScreenName;
   const BottomNavigationTestScreen({
@@ -46,13 +45,12 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
     final dio = ref.watch(dioProvider);
     final secureStorage = ref.watch(secureStorageProvider);
 
-    final liveInfoData = ref.watch(liveInfoProvider);
+    // final liveInfoData = ref.watch(liveInfoProvider);
     // if (liveInfoData.length == 0) {
     //   return Center(
     //     child: CircularProgressIndicator(),
     //   );
     // }
-
 
     return SizedBox(
       width: MediaQuery.of(context).size.width,
@@ -95,7 +93,6 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
               print("push get button2");
             },
             child: Icon(Icons.delete),
-
           ),
           Expanded(
             child: FutureBuilder<FriendLocationAndBattery>(
@@ -112,7 +109,7 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
                       // 아이템
                       return Row(
                         children: [
-                          Text("${item.userNameTag}"),
+                          Text("${item.userId}"),
                           SizedBox(width: 10),
                           Text("${item.liveInfo.latitude}"),
                           SizedBox(width: 10),
@@ -136,7 +133,6 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
               },
             ),
           ),
-
         ],
       ),
     );
@@ -147,8 +143,8 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
       final response = await dio.post(
         getApi(API.postLocationAndBattery),
         data: {
-          "latitude": "87.123456",
-          "longitude": "87.123456",
+          "latitude": "37.550853",
+          "longitude": "127.078971",
           "battery": "50",
           "isCharging": false,
         },
@@ -164,21 +160,8 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
   }
 
   Future<FriendLocationAndBattery> testGetApi(Dio dio) async {
-    // try {
-    //   logger.i("get 결과" + getApi(API.getLocationAndBattery));
-
-    //   final response = await dio.get(getApi(API.getLocationAndBattery));
-    //   logger.w(response.statusCode);
-    //   logger.w(response.headers);
-    //   logger.w(response.data);
-    //   return response.data['result'];
-    // } catch (e) {
-    //   logger.e(e);
-    //   return null;
-    // }
     // TODO: baseUrl을 안쓰며느 dio의 기본 baseUrl로 설정되는데, 그거 나중에 설정하기
 
     return ref.watch(liveInfoRepositoryProvider).getFriendLocationAndBattery();
-
   }
 }

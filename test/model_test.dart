@@ -36,6 +36,6 @@ void main() {
 
     expect(model.friendInfoList, isA<List<FriendInfoModel>>());
     expect(model.friendInfoList.length, parsedJson['result'].length);
-    expect(model.friendInfoList[0].userNameTag, 'user_3');
+    expect(model.friendInfoList[0].userId, 'user_3');
   });
 }
