@@ -1,7 +1,3 @@
-import 'dart:ffi';
-
-import 'package:json_annotation/json_annotation.dart';
-
 // 터미널 명령어 flutter pub run build_runner build
 
 class FriendLocationAndBattery {

@@ -15,3 +15,11 @@ const double userNameHeight = 70.0;
 const double userNameFontSize = 50.0;
 final Color userNameColor = Colors.grey.shade100;
 const FontWeight userNameFontWeight = FontWeight.bold;
+
+enum ImageType {
+  Network,
+  Asset,
+  File,
+  Memory,
+  Directory,
+}
