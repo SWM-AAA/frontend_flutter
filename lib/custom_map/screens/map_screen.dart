@@ -1,19 +1,23 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
-import 'package:frontend/custom_map/components/const/data.dart';
-import 'package:frontend/custom_map/components/const/type.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/common/consts/api.dart';
+import 'package:frontend/common/dio/dio.dart';
+import 'package:frontend/common/utils/api.dart';
+import 'package:frontend/custom_map/model/type.dart';
 import 'package:frontend/custom_map/components/custom_google_map.dart';
-import 'package:frontend/custom_map/components/marker/custom_marker.dart';
-import 'package:frontend/custom_map/components/marker_icon.dart';
+import 'package:frontend/custom_map/components/marker/google_user_marker.dart';
+import 'package:frontend/custom_map/components/marker/user_marker_icon.dart';
 import 'package:frontend/custom_map/components/test_button/create_init_marker_button.dart';
 import 'package:frontend/custom_map/components/test_button/delete_all_marker_button.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 
-class MapScreen extends StatefulWidget {
+class MapScreen extends ConsumerStatefulWidget {
   final String userName;
   final String userProfileImagePath;
 
@@ -24,10 +28,10 @@ class MapScreen extends StatefulWidget {
   });
 
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  ConsumerState<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _MapScreenState extends ConsumerState<MapScreen> {
   // 로그관리를 위한 변수
   var logger = Logger();
   late Future<Position> currentLocation;
@@ -63,6 +67,7 @@ class _MapScreenState extends State<MapScreen> {
         .listen((Position position) {
       logger.w("Position: $position");
       updateMapCameraPosition(position);
+      postMyLocation(position);
     });
   }
 
@@ -106,19 +111,47 @@ class _MapScreenState extends State<MapScreen> {
     updateMyMarkerPosition(latLng);
   }
 
+  Future<void> postMyLocation(Position position) async {
+    final dio = ref.watch(dioProvider);
+
+    try {
+      final response = await dio.post(
+        getApi(API.postLocationAndBattery),
+        data: {
+          "latitude": position.latitude.toString(),
+          "longitude": position.longitude.toString(),
+          "battery": "50",
+          "isCharging": false,
+        },
+      );
+      logger.i("성공 업로드");
+      logger.w(response.statusCode);
+      logger.w(response.headers);
+      print(response.headers);
+      logger.w(response.data);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
   // 현재 위치를 표시하는 빨간색 마커, 내 위치를 다른 아이콘으로 표기하고싶을때 사용할것같다.
   void updateMyMarkerPosition(LatLng latLng) async {
+    String userMarkerId = 'I';
+    await updateMarkerLocation(userMarkerId, latLng);
+  }
+
+  Future<void> updateMarkerLocation(String userMarkerId, LatLng latLng) async {
     MarkerInfo markerInfo = MarkerInfo(
-      markerId: 'I',
+      markerId: userMarkerId,
       userName: widget.userName,
       imagePath: widget.userProfileImagePath,
     );
-    Marker newMarker = await createMarker(markerInfo, latLng);
+    Marker newMarker = await googleUserMarker(markerInfo, latLng);
 
     setState(() {
       // markers.removeWhere((element) => element.markerId.value == 'I');
       // markers.add(newMarker);
-      int index = markers.indexWhere((element) => element.markerId.value == 'I');
+      int index = markers.indexWhere((element) => element.markerId.value == userMarkerId);
       if (index != -1) {
         markers[index] = newMarker;
       } else {

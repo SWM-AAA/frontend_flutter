@@ -32,7 +32,9 @@ class CustomInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    print('REQUEST[${options.method}] => PATH: ${options.path}');
     // access 토큰 자동 적용
+    // TODO: true 일때 따로 없을꺼라 if문 지워야함
     if (options.headers['accessToken'] == 'true') {
       options.headers.remove('accessToken');
     }
@@ -90,11 +92,19 @@ class CustomInterceptor extends Interceptor {
   }
 
   @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    // TODO: 해더를 보고 토큰을 갱신시킨다.
+    super.onResponse(response, handler);
+  }
+
+  @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
+    // TODO: 토큰 오류시 로그인페이지로 보내고, 다시 로그인 시키면 알아서 서버에서 새로운 토큰을 준다. (강의6-5)
     // zeppy token에 문제있을 시 status code 401 반환
     final refreshToken = await secureStorage.read(key: REFRESH_TOKEN_KEY);
 
     // TODO <dio.dart> refresh token 없을 때 처리
+
     // kakao accessToken이 유효한지
     // 유효하지 않다면 kakao refreshToken으로 갱신시켜서 보내주고
     // kakao refreshToken의 유효기간이 1달남았다면 refreshToken갱신후 보내주기
@@ -106,8 +116,7 @@ class CustomInterceptor extends Interceptor {
     final isPathAccessTokenRefresh = err.requestOptions.path == '/auth/token';
 
     if (isStatus401 && !isPathAccessTokenRefresh) {
-      autoRefreshAccessToken(err: err, handler: handler);
-      return;
+      return autoRefreshAccessToken(err: err, handler: handler);
     }
     super.onError(err, handler);
   }
