@@ -45,20 +45,19 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
     final dio = ref.watch(dioProvider);
     final secureStorage = ref.watch(secureStorageProvider);
 
-    // final liveInfoData = ref.watch(liveInfoProvider);
-    // if (liveInfoData.length == 0) {
-    //   return Center(
-    //     child: CircularProgressIndicator(),
-    //   );
-    // }
-
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (userNameWatch != null) Text('$userNameWatch님 환영합니다!'),
           Text('테스트 전환 화면: ${widget.testScreenName}'),
+          if (userNameWatch != null)
+            Text(
+              '$userNameWatch님 환영합니다!',
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
           userProfileImagePathWatch == MY_PROFILE_DEFAULT_IMAGE_PATH
               ? Image.asset(
                   userProfileImagePathWatch,
@@ -88,49 +87,46 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
             },
             child: Icon(Icons.send),
           ),
-          ElevatedButton(
-            onPressed: () {
-              print("push get button2");
-            },
-            child: Icon(Icons.delete),
-          ),
           Expanded(
-            child: FutureBuilder<FriendLocationAndBattery>(
-              future: testGetApi(dio),
-              builder: (context, AsyncSnapshot<FriendLocationAndBattery> snapshot) {
-                if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                } else if (snapshot.hasData) {
-                  return ListView.separated(
-                    itemCount: snapshot.data!.friendInfoList.length,
-                    itemBuilder: (_, index) {
-                      final item = snapshot.data!.friendInfoList[index];
-                      logger.w(item);
-                      // 아이템
-                      return Row(
-                        children: [
-                          Text("${item.userId}"),
-                          SizedBox(width: 10),
-                          Text("${item.liveInfo.latitude}"),
-                          SizedBox(width: 10),
-                          Text("${item.liveInfo.longitude}"),
-                          SizedBox(width: 10),
-                          Text("${item.liveInfo.battery}"),
-                          SizedBox(width: 10),
-                          Text("${item.liveInfo.isCharging}"),
-                        ],
-                      );
-                    },
-                    separatorBuilder: (_, index) {
-                      // 아이템 사이사이
-                      return SizedBox(
-                        height: 10,
-                      );
-                    },
-                  );
-                }
-                return CircularProgressIndicator();
-              },
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: FutureBuilder<FriendLocationAndBattery>(
+                future: testGetApi(dio),
+                builder: (context, AsyncSnapshot<FriendLocationAndBattery> snapshot) {
+                  if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  } else if (snapshot.hasData) {
+                    return ListView.separated(
+                      itemCount: snapshot.data!.friendInfoList.length,
+                      itemBuilder: (_, index) {
+                        final item = snapshot.data!.friendInfoList[index];
+                        logger.w(item);
+                        // 아이템
+                        return Row(
+                          children: [
+                            Text("${item.userId}"),
+                            SizedBox(width: 10),
+                            Text("${item.liveInfo.latitude}"),
+                            SizedBox(width: 10),
+                            Text("${item.liveInfo.longitude}"),
+                            SizedBox(width: 10),
+                            Text("${item.liveInfo.battery}"),
+                            SizedBox(width: 10),
+                            Text("${item.liveInfo.isCharging}"),
+                          ],
+                        );
+                      },
+                      separatorBuilder: (_, index) {
+                        // 아이템 사이사이
+                        return SizedBox(
+                          height: 10,
+                        );
+                      },
+                    );
+                  }
+                  return CircularProgressIndicator();
+                },
+              ),
             ),
           ),
         ],
@@ -160,8 +156,6 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
   }
 
   Future<FriendLocationAndBattery> testGetApi(Dio dio) async {
-    // TODO: baseUrl을 안쓰며느 dio의 기본 baseUrl로 설정되는데, 그거 나중에 설정하기
-
     return ref.watch(liveInfoRepositoryProvider).getFriendLocationAndBattery();
   }
 }

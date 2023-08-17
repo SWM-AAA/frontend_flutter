@@ -5,8 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 Future<Marker> googleUserMarker(MarkerInfo markerInfo, LatLng latLng) async {
   return Marker(
     markerId: MarkerId(markerInfo.markerId),
-    draggable: true,
-    onTap: () => print("tapped!"),
+    draggable: false,
     position: latLng,
     icon: await userMarkerIcon(
       markerInfo.imagePath,
