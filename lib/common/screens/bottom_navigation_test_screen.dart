@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -10,6 +11,7 @@ import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/riverpod/register_dialog_screen.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
 import 'package:frontend/common/utils/api.dart';
+
 import 'package:frontend/custom_map/model/friend_info_model.dart';
 import 'package:frontend/custom_map/provider/live_info_provider.dart';
 import 'package:frontend/custom_map/repository/live_info_repository.dart';
@@ -18,7 +20,7 @@ import 'package:logger/logger.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class BottomNavigationTestScreen extends ConsumerStatefulWidget {
-  final String testScreenName;
+  final String? testScreenName;
   const BottomNavigationTestScreen({
     super.key,
     required this.testScreenName,
@@ -48,6 +50,7 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
     //     child: CircularProgressIndicator(),
     //   );
     // }
+
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Column(

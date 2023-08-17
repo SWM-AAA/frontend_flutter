@@ -10,7 +10,9 @@ enum API {
 
 Map<API, String> apiMap = {
   // user
+
   API.register: '/api/v1/users/register',
+
   // map
   API.postLocationAndBattery: '/api/v1/users/location-and-battery',
   API.getLocationAndBattery: '/api/v1/users/all-user-location-and-battery',
