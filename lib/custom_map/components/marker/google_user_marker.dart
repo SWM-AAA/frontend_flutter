@@ -1,15 +1,18 @@
+import 'package:frontend/custom_map/const/marker.dart';
 import 'package:frontend/custom_map/model/marker_static_info_model.dart';
 import 'package:frontend/custom_map/components/marker/user_marker_icon.dart';
+import 'package:frontend/custom_map/model/static_info_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-Future<Marker> googleUserMarker(MarkerInfo markerInfo, LatLng latLng) async {
+Future<Marker> googleUserMarker(StaticInfoModel markerInfo, LatLng latLng, ImageType imageType) async {
   return Marker(
-    markerId: MarkerId(markerInfo.markerId),
+    markerId: MarkerId(markerInfo.userId),
     draggable: false,
     position: latLng,
     icon: await userMarkerIcon(
-      markerInfo.imagePath,
-      markerInfo.userName,
+      markerInfo.imageUrl,
+      markerInfo.nickname,
+      imageType,
     ),
   );
 }
