@@ -10,7 +10,6 @@ import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/riverpod/register_dialog_screen.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
-import 'package:frontend/common/utils/api.dart';
 
 import 'package:frontend/custom_map/model/friend_info_model.dart';
 import 'package:frontend/custom_map/provider/live_info_provider.dart';
@@ -135,6 +134,27 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
   }
 
   Future<void> testPostApi(Dio dio, String userNameWatch) async {
+    try {
+      final response = await dio.post(
+        getApi(API.postLocationAndBattery),
+        data: {
+          "latitude": "37.550853",
+          "longitude": "127.078971",
+          "battery": "50",
+          "isCharging": false,
+        },
+      );
+      logger.i("성공 업로드");
+      logger.w(response.statusCode);
+      logger.w(response.headers);
+      print(response.headers);
+      logger.w(response.data);
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  Future<void> testPostApiMove(Dio dio, String userNameWatch) async {
     try {
       final response = await dio.post(
         getApi(API.postLocationAndBattery),

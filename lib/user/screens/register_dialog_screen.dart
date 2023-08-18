@@ -3,18 +3,16 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/components/custom_text_from.dart';
 import 'package:frontend/common/consts/api.dart';
 import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/riverpod/register_dialog_screen.dart';
-import 'package:frontend/common/screens/root_tab.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
-import 'package:frontend/common/utils/api.dart';
 import 'package:frontend/user/consts/data.dart';
 import 'package:frontend/user/model/access_key_model.dart';
+import 'package:frontend/user/utils/route.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
@@ -30,26 +28,30 @@ class RegisterDialogScreen extends ConsumerStatefulWidget {
 class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
   String userRealName = '';
   File? userProfileImageFile;
-  String? testSendDataOnlyFicker;
   final ImagePicker picker = ImagePicker();
   final logger = Logger();
 
-  Future pickImage() async {
+  Future pickImageFromDevice() async {
     try {
-      // image picker를 통해 이미지를 선택하고, 선택된 이미지를 가져옴
       final XFile? pickedImage = await ImagePicker().pickImage(
         source: ImageSource.gallery,
-        imageQuality: 30, // 이미지 크기 압축을 위해 퀄리티를 30으로 낮춤.
+        imageQuality: 30,
       );
-      if (pickedImage == null) return;
-      String pathPickedImage = pickedImage.path;
+
+      if (pickedImage == null) {
+        // TODO: 이전 버전 스마트폰에서 null값이 됨.
+        return;
+      }
       File? imageFile = File(pickedImage.path);
 
-      var croppedImageFile = await _cropImage(imageFile: imageFile);
+      var croppedImageFile;
+      try {
+        croppedImageFile = await cropImageRectangle(imageFile: imageFile);
+      } catch (e) {
+        logger.e(e);
+      }
       setState(() {
-        // file들의 경로만 받아서 저장
-        testSendDataOnlyFicker = pathPickedImage;
-        userProfileImageFile = croppedImageFile;
+        userProfileImageFile = croppedImageFile ?? imageFile;
       });
     } on PlatformException catch (e) {
       logger.e(e);
@@ -57,16 +59,16 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
     }
   }
 
-  Future<File?> _cropImage({required File imageFile}) async {
+  Future<File?> cropImageRectangle({required File imageFile}) async {
     CroppedFile? croppedImage = await ImageCropper().cropImage(
         sourcePath: imageFile.path,
-        aspectRatio: CropAspectRatio(
+        aspectRatio: const CropAspectRatio(
           ratioX: 1,
           ratioY: 1,
         ),
         uiSettings: [
           IOSUiSettings(
-            title: 'Edit Image',
+            title: 'crop rectangle Image',
           ),
           AndroidUiSettings(
             toolbarTitle: 'Edit Image',
@@ -80,9 +82,7 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
 
   Future<void> postRegisterData(Dio dio, secureStorage) async {
     var postName = userRealName == '' ? DEFAULT_USER_NAME : userRealName;
-    var postImageData = userProfileImageFile != null
-        ? await MultipartFile.fromFile(userProfileImageFile!.path, filename: userProfileImageFile!.path.split('/').last)
-        : await getFileFromAssets('assets/images/profile_pictures/default_profile.png');
+    MultipartFile postImageData = await selectValidImageData();
     try {
       var formData = FormData.fromMap(
         {
@@ -95,18 +95,25 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
       final response = await dio.post(
         getApi(API.register),
         data: formData,
-        // options.contentType: 'multipart/form-data',
       );
       logger.w("postRegisterData response : ${response.data}");
-      var updatedAccessKeyModel = UpdatedAccessKeyModel.fromJson(response.data);
-      await secureStorage.write(key: ACCESS_TOKEN_KEY, value: updatedAccessKeyModel.access_token);
+
+      await updateAccessKey(response, secureStorage);
+
       dio.options.contentType = 'application/json';
     } catch (e) {
       logger.e(e);
     }
   }
 
-  Future<MultipartFile> getFileFromAssets(String assetPath) async {
+  Future<MultipartFile> selectValidImageData() async {
+    var postImageData = userProfileImageFile != null
+        ? await MultipartFile.fromFile(userProfileImageFile!.path, filename: userProfileImageFile!.path.split('/').last)
+        : await createMultipartFileFromAssets(MY_PROFILE_DEFAULT_IMAGE_PATH);
+    return postImageData;
+  }
+
+  Future<MultipartFile> createMultipartFileFromAssets(String assetPath) async {
     Uint8List imageBytes = await loadAssetImage(assetPath);
     String fileName = assetPath.split('/').last;
     return MultipartFile.fromBytes(
@@ -120,25 +127,26 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
     return data.buffer.asUint8List();
   }
 
-  void routeRootTab(BuildContext context) {
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (_) => const RootTab(),
-        ),
-        (route) => false);
+  Future<void> updateAccessKey(Response<dynamic> response, secureStorage) async {
+    var updatedAccessKeyModel = UpdatedAccessKeyModel.fromJson(response.data);
+    await secureStorage.write(key: ACCESS_TOKEN_KEY, value: updatedAccessKeyModel.access_token);
   }
 
-  Future<void> saveInputData(BuildContext context) async {
+  Future<void> saveRegisterData(BuildContext context) async {
     if (userRealName != '') {
       ref.read(registeredUserInfoProvider.notifier).setUserName(userRealName);
     }
-
     if (userProfileImageFile != null) {
-      final Directory directory = await getApplicationDocumentsDirectory();
-      final String userProfileImageFilePath = directory.path + '/user_profile_image.png';
-      final File newImage = await userProfileImageFile!.copy(userProfileImageFilePath);
+      String userProfileImageFilePath = await saveImageInDeviceDirectory();
       ref.read(registeredUserInfoProvider.notifier).setUserImage(userProfileImageFilePath);
     }
+  }
+
+  Future<String> saveImageInDeviceDirectory() async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final String userProfileImageFilePath = directory.path + '/user_profile_image.png';
+    final File newImage = await userProfileImageFile!.copy(userProfileImageFilePath);
+    return userProfileImageFilePath;
   }
 
   @override
@@ -179,7 +187,6 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
                     userRealName = value;
                   },
                   customHintText: '이름을 입력해주세요!',
-                  // customErrorText: '한글로 2자 이상 6자 이내로 입력해주세요.',
                 ),
               ),
               const SizedBox(
@@ -188,9 +195,8 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
               Expanded(
                 flex: 3,
                 child: GestureDetector(
-                  // behavior: HitTestBehaviorType.translucent,
                   onTap: () async {
-                    pickImage();
+                    pickImageFromDevice();
                   },
                   child: Center(
                     child: Container(
@@ -229,9 +235,9 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
                 ),
                 onPressed: () async {
                   await postRegisterData(dio, secureStorage);
-                  await saveInputData(context);
+                  await saveRegisterData(context);
 
-                  routeRootTab(context);
+                  moveToRootTab(context);
                 },
                 child: const Text('Zeppy 시작하기'),
               ),
