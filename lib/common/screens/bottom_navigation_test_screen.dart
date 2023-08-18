@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/consts/api.dart';
 import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/common/dio/dio.dart';
-import 'package:frontend/common/riverpod/register_dialog_screen.dart';
+import 'package:frontend/common/provider/register_dialog_screen.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
 
 import 'package:frontend/custom_map/model/friend_info_model.dart';

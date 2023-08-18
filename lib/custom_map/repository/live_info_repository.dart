@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/consts/api.dart';
 import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/custom_map/model/friend_info_model.dart';
-import 'package:frontend/custom_map/model/static_info_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'live_info_repository.g.dart';

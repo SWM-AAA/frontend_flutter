@@ -29,18 +29,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   var logger = Logger();
   @override
   Widget build(BuildContext context) {
-    final dio = ref.watch(dioProvider);
     final secureStorage = ref.watch(secureStorageProvider);
-
-    Future<bool> requestCheckUserRegistered(User user) async {
-      if (user.kakaoAccount?.email != null) {
-        final checkRegisterResp = await dio
-            .post(dotenv.env['AAA_PUBLIC_API_BASE'].toString(), data: {'memberEmail': '${user.kakaoAccount?.email}'});
-        return checkRegisterResp.data['isRegistered'];
-      } else {
-        throw Exception('email 정보 없음');
-      }
-    }
 
     void showRegisterDialog() {
       showDialog(

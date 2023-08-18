@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/consts/api.dart';
 import 'package:frontend/common/dio/dio.dart';
-import 'package:frontend/common/riverpod/register_dialog_screen.dart';
+import 'package:frontend/common/provider/register_dialog_screen.dart';
 import 'package:frontend/custom_map/components/test_button/update_markers_button.dart';
 import 'package:frontend/custom_map/const/marker.dart';
 import 'package:frontend/custom_map/model/friend_info_model.dart';
@@ -213,7 +213,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       );
       if (markers[index].position != newLatLng) {
         markers[index] = markers[index].copyWith(positionParam: newLatLng);
-        logger.w(markers);
       } else {
         logger.w("위치가 같음 ${friendInfoModel.userId}");
       }

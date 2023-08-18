@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
-import 'package:frontend/common/riverpod/register_dialog_screen.dart';
+import 'package:frontend/common/provider/register_dialog_screen.dart';
 import 'package:frontend/common/screens/bottom_navigation_test_screen.dart';
 import 'package:frontend/custom_map/screens/map_screen.dart';
 

@@ -8,7 +8,7 @@ import 'package:frontend/common/components/custom_text_from.dart';
 import 'package:frontend/common/consts/api.dart';
 import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/common/dio/dio.dart';
-import 'package:frontend/common/riverpod/register_dialog_screen.dart';
+import 'package:frontend/common/provider/register_dialog_screen.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
 import 'package:frontend/user/consts/data.dart';
 import 'package:frontend/user/model/access_key_model.dart';
@@ -28,7 +28,6 @@ class RegisterDialogScreen extends ConsumerStatefulWidget {
 class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
   String userRealName = '';
   File? userProfileImageFile;
-  final ImagePicker picker = ImagePicker();
   final logger = Logger();
 
   Future pickImageFromDevice() async {
