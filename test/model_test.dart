@@ -34,7 +34,7 @@ void main() {
 
     final model = FriendLocationAndBattery.fromJson(parsedJson);
 
-    expect(model.friendInfoList, isA<List<FriendInfoModel>>());
+    expect(model.friendInfoList, isA<List<UserLiveInfoModel>>());
     expect(model.friendInfoList.length, parsedJson['result'].length);
     expect(model.friendInfoList[0].userId, 'user_3');
   });

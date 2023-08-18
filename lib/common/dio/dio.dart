@@ -97,9 +97,8 @@ class CustomInterceptor extends Interceptor {
     // TODO: 해더를 보고 토큰을 갱신시킨다.
     var logger = Logger();
     logger.i("onResponse");
-    logger.i(response);
-    logger.i(response.headers);
-    logger.i(response.data);
+    logger.i(response.headers, response.data);
+
     super.onResponse(response, handler);
   }
 

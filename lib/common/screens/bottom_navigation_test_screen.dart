@@ -12,11 +12,9 @@ import 'package:frontend/common/riverpod/register_dialog_screen.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
 
 import 'package:frontend/custom_map/model/friend_info_model.dart';
-import 'package:frontend/custom_map/provider/live_info_provider.dart';
 import 'package:frontend/custom_map/repository/live_info_repository.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class BottomNavigationTestScreen extends ConsumerStatefulWidget {
   final String? testScreenName;
@@ -79,12 +77,15 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
           ),
           ElevatedButton(
             onPressed: () async {
-              var accessToken = await secureStorage.read(key: ACCESS_TOKEN_KEY);
-
-              // logger.w(accessToken);
               await testPostApi(dio, userNameWatch);
             },
             child: Icon(Icons.send),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await testPostApiMove(dio, userNameWatch);
+            },
+            child: Icon(Icons.directions_walk),
           ),
           Expanded(
             child: Padding(
@@ -99,7 +100,6 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
                       itemCount: snapshot.data!.friendInfoList.length,
                       itemBuilder: (_, index) {
                         final item = snapshot.data!.friendInfoList[index];
-                        logger.w(item);
                         // 아이템
                         return Row(
                           children: [
@@ -138,7 +138,7 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
       final response = await dio.post(
         getApi(API.postLocationAndBattery),
         data: {
-          "latitude": "37.550853",
+          "latitude": "37.570853",
           "longitude": "127.078971",
           "battery": "50",
           "isCharging": false,
@@ -156,20 +156,19 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
 
   Future<void> testPostApiMove(Dio dio, String userNameWatch) async {
     try {
-      final response = await dio.post(
-        getApi(API.postLocationAndBattery),
-        data: {
-          "latitude": "37.550853",
-          "longitude": "127.078971",
-          "battery": "50",
-          "isCharging": false,
-        },
-      );
-      logger.i("성공 업로드");
-      logger.w(response.statusCode);
-      logger.w(response.headers);
-      print(response.headers);
-      logger.w(response.data);
+      for (int i = 0; i < 10; ++i) {
+        final response = await dio.post(
+          getApi(API.postLocationAndBattery),
+          data: {
+            "latitude": (37.570853 - i * 0.001).toString(),
+            "longitude": (127.078971 + i * 0.002).toString(),
+            "battery": "50",
+            "isCharging": false,
+          },
+        );
+        await Future.delayed(Duration(seconds: 1));
+      }
+      logger.i("움직임 끝");
     } catch (e) {
       logger.e(e);
     }
