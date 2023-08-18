@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
+import 'package:logger/logger.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio();
@@ -94,6 +95,11 @@ class CustomInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     // TODO: 해더를 보고 토큰을 갱신시킨다.
+    var logger = Logger();
+    logger.i("onResponse");
+    logger.i(response);
+    logger.i(response.headers);
+    logger.i(response.data);
     super.onResponse(response, handler);
   }
 
@@ -101,6 +107,10 @@ class CustomInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     // TODO: 토큰 오류시 로그인페이지로 보내고, 다시 로그인 시키면 알아서 서버에서 새로운 토큰을 준다. (강의6-5)
     // zeppy token에 문제있을 시 status code 401 반환
+    var logger = Logger();
+    logger.e(err);
+    logger.e(err.response?.data);
+    /*
     final refreshToken = await secureStorage.read(key: REFRESH_TOKEN_KEY);
 
     // TODO <dio.dart> refresh token 없을 때 처리
@@ -118,6 +128,7 @@ class CustomInterceptor extends Interceptor {
     if (isStatus401 && !isPathAccessTokenRefresh) {
       return autoRefreshAccessToken(err: err, handler: handler);
     }
+    */
     super.onError(err, handler);
   }
 }

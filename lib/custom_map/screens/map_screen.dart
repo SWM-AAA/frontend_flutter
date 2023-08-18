@@ -1,18 +1,19 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/consts/api.dart';
 import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/utils/api.dart';
-import 'package:frontend/custom_map/model/type.dart';
+import 'package:frontend/custom_map/components/test_button/update_markers_button.dart';
+import 'package:frontend/custom_map/const/marker.dart';
+import 'package:frontend/custom_map/model/friend_info_model.dart';
+import 'package:frontend/custom_map/model/marker_static_info_model.dart';
 import 'package:frontend/custom_map/components/custom_google_map.dart';
 import 'package:frontend/custom_map/components/marker/google_user_marker.dart';
-import 'package:frontend/custom_map/components/marker/user_marker_icon.dart';
 import 'package:frontend/custom_map/components/test_button/create_init_marker_button.dart';
-import 'package:frontend/custom_map/components/test_button/delete_all_marker_button.dart';
+import 'package:frontend/custom_map/model/static_info_model.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
@@ -48,7 +49,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       37.540853,
       127.078971,
     ),
-    zoom: 15,
+    zoom: 14,
   );
 
   @override
@@ -69,6 +70,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       updateMapCameraPosition(position);
       postMyLocation(position);
     });
+
+    initMarkerSet();
   }
 
   @override
@@ -137,20 +140,19 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   // 현재 위치를 표시하는 빨간색 마커, 내 위치를 다른 아이콘으로 표기하고싶을때 사용할것같다.
   void updateMyMarkerPosition(LatLng latLng) async {
     String userMarkerId = 'I';
-    await updateMarkerLocation(userMarkerId, latLng);
+    await updateMyMarkerLocation(userMarkerId, latLng);
   }
 
-  Future<void> updateMarkerLocation(String userMarkerId, LatLng latLng) async {
-    MarkerInfo markerInfo = MarkerInfo(
-      markerId: userMarkerId,
-      userName: widget.userName,
-      imagePath: widget.userProfileImagePath,
+  Future<void> updateMyMarkerLocation(String userMarkerId, LatLng latLng) async {
+    StaticInfoModel markerInfo = StaticInfoModel(
+      userId: userMarkerId,
+      nickname: widget.userName,
+      userTag: widget.userName + '#0001',
+      imageUrl: widget.userProfileImagePath,
     );
-    Marker newMarker = await googleUserMarker(markerInfo, latLng);
+    Marker newMarker = await googleUserMarker(markerInfo, latLng, ImageType.Directory);
 
     setState(() {
-      // markers.removeWhere((element) => element.markerId.value == 'I');
-      // markers.add(newMarker);
       int index = markers.indexWhere((element) => element.markerId.value == userMarkerId);
       if (index != -1) {
         markers[index] = newMarker;
@@ -165,10 +167,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     return Column(
       children: [
         Expanded(
-          // height: 400,
           child: CustomGoogleMap(
             initCameraPosition: initCameraPosition,
             markers: markers,
+            // markers: snapshot.data ?? markers,
             updateControllerOnMapCreated: (GoogleMapController controller) {
               setState(() {
                 googleMapController = controller;
@@ -181,7 +183,76 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             },
           ),
         ),
+        UpdateMarkersButton(
+          updateMarkerLocation: (friendLiveInfoList) {
+            setState(() {
+              for (FriendInfoModel newFriendLiveInfo in friendLiveInfoList) {
+                int index = markers.indexWhere(
+                  (element) => element.markerId.value == newFriendLiveInfo.userId,
+                );
+                if (index != -1) {
+                  LatLng newLatLng = LatLng(
+                    newFriendLiveInfo.liveInfo.latitude,
+                    newFriendLiveInfo.liveInfo.longitude,
+                  );
+                  if (markers[index].position != newLatLng) {
+                    markers[index] = markers[index].copyWith(positionParam: newLatLng);
+                  }
+                } else {
+                  // markers.add(newMarker);
+                }
+              }
+            });
+          },
+        )
       ],
     );
+  }
+
+  Future<void> initMarkerSet() async {
+    var response = await getUserInfo();
+
+    List<StaticInfoModel> markerInfoList = FriendNameAndImage.fromJson(response.data).staticInfoList;
+
+    for (var userMarkerInfo in markerInfoList) {
+      Marker thisMarker = await TEST_createRandomLocationMarker(userMarkerInfo);
+
+      setState(() {
+        markers.add(thisMarker);
+      });
+    }
+  }
+
+  Future<Marker> TEST_createRandomLocationMarker(StaticInfoModel userMarkerInfo) async {
+    double move_lat = (Random().nextInt(21) - 10) / 1000;
+    double move_lng = (Random().nextInt(21) - 10) / 1000;
+
+    Marker thisMarker = await googleUserMarker(
+      StaticInfoModel(
+        userId: userMarkerInfo.userId,
+        nickname: userMarkerInfo.nickname,
+        userTag: userMarkerInfo.userTag,
+        imageUrl: userMarkerInfo.imageUrl,
+      ),
+      LatLng(37.540853 + move_lat, 127.078971 + move_lng),
+      ImageType.Network,
+    );
+    return thisMarker;
+  }
+
+  Future<dynamic> getUserInfo() async {
+    final dio = ref.read(dioProvider);
+    var response;
+    try {
+      response = await dio.get(
+        getApi(API.getAllUserInfo),
+      );
+      logger.w(response.statusCode);
+      logger.w(response.headers);
+      logger.w(response.data);
+    } catch (e) {
+      logger.e(e);
+    }
+    return response;
   }
 }

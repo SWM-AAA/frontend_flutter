@@ -1,9 +1,3 @@
-import 'dart:ffi';
-
-import 'package:json_annotation/json_annotation.dart';
-
-part 'friend_info_model.g.dart';
-
 // 터미널 명령어 flutter pub run build_runner build
 
 class FriendLocationAndBattery {
@@ -29,16 +23,16 @@ class FriendLocationAndBattery {
 }
 
 class FriendInfoModel {
-  late String userNameTag;
+  late String userId;
   late LiveInfoModel liveInfo;
   FriendInfoModel({
-    required this.userNameTag,
+    required this.userId,
     required this.liveInfo,
   });
 
   factory FriendInfoModel.fromJson(Map<String, dynamic> json) {
     return FriendInfoModel(
-      userNameTag: json.keys.first,
+      userId: json.keys.first,
       liveInfo: LiveInfoModel.fromJson(json.values.first),
     );
   }

@@ -11,8 +11,10 @@ import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/riverpod/register_dialog_screen.dart';
 import 'package:frontend/common/screens/root_tab.dart';
+import 'package:frontend/common/secure_storage/secure_storage.dart';
 import 'package:frontend/common/utils/api.dart';
 import 'package:frontend/user/consts/data.dart';
+import 'package:frontend/user/model/access_key_model.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
@@ -31,6 +33,7 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
   String? testSendDataOnlyFicker;
   final ImagePicker picker = ImagePicker();
   final logger = Logger();
+
   Future pickImage() async {
     try {
       // image picker를 통해 이미지를 선택하고, 선택된 이미지를 가져옴
@@ -75,9 +78,73 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
     return File(croppedImage.path);
   }
 
+  Future<void> postRegisterData(Dio dio, secureStorage) async {
+    var postName = userRealName == '' ? DEFAULT_USER_NAME : userRealName;
+    var postImageData = userProfileImageFile != null
+        ? await MultipartFile.fromFile(userProfileImageFile!.path, filename: userProfileImageFile!.path.split('/').last)
+        : await getFileFromAssets('assets/images/profile_pictures/default_profile.png');
+    try {
+      var formData = FormData.fromMap(
+        {
+          'profileimage': postImageData,
+          'nickname': postName,
+        },
+      );
+      dio.options.contentType = 'multipart/form-data';
+      dio.options.maxRedirects.isFinite;
+      final response = await dio.post(
+        getApi(API.register),
+        data: formData,
+        // options.contentType: 'multipart/form-data',
+      );
+      logger.w("postRegisterData response : ${response.data}");
+      var updatedAccessKeyModel = UpdatedAccessKeyModel.fromJson(response.data);
+      await secureStorage.write(key: ACCESS_TOKEN_KEY, value: updatedAccessKeyModel.access_token);
+      dio.options.contentType = 'application/json';
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  Future<MultipartFile> getFileFromAssets(String assetPath) async {
+    Uint8List imageBytes = await loadAssetImage(assetPath);
+    String fileName = assetPath.split('/').last;
+    return MultipartFile.fromBytes(
+      imageBytes,
+      filename: fileName,
+    );
+  }
+
+  Future<Uint8List> loadAssetImage(String assetPath) async {
+    final ByteData data = await rootBundle.load(assetPath);
+    return data.buffer.asUint8List();
+  }
+
+  void routeRootTab(BuildContext context) {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (_) => const RootTab(),
+        ),
+        (route) => false);
+  }
+
+  Future<void> saveInputData(BuildContext context) async {
+    if (userRealName != '') {
+      ref.read(registeredUserInfoProvider.notifier).setUserName(userRealName);
+    }
+
+    if (userProfileImageFile != null) {
+      final Directory directory = await getApplicationDocumentsDirectory();
+      final String userProfileImageFilePath = directory.path + '/user_profile_image.png';
+      final File newImage = await userProfileImageFile!.copy(userProfileImageFilePath);
+      ref.read(registeredUserInfoProvider.notifier).setUserImage(userProfileImageFilePath);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final dio = ref.watch(dioProvider);
+    final secureStorage = ref.watch(secureStorageProvider);
 
     return SingleChildScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -161,7 +228,7 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
                   ),
                 ),
                 onPressed: () async {
-                  // await postRegisterData(dio);
+                  await postRegisterData(dio, secureStorage);
                   await saveInputData(context);
 
                   routeRootTab(context);
@@ -173,54 +240,5 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> postRegisterData(Dio dio) async {
-    var postName = userRealName == '' ? DEFAULT_USER_NAME : userRealName;
-    var postImageData = testSendDataOnlyFicker ?? MY_PROFILE_DEFAULT_IMAGE_PATH;
-    var formData = FormData.fromMap(
-      {
-
-        'profileimage': await MultipartFile.fromFile(postImageData),
-        'nickname': postName,
-
-      },
-    );
-    try {
-      dio.options.contentType = 'multipart/form-data';
-      dio.options.maxRedirects.isFinite; //??
-      final response = await dio.post(
-        getApi(API.register),
-        data: formData,
-      );
-      logger.i("성공 업로드");
-      logger.w(response.statusCode);
-      logger.w(response.headers);
-      logger.w(response.data);
-    } catch (e) {
-      logger.e(e);
-    }
-  }
-
-  void routeRootTab(BuildContext context) {
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (_) => const RootTab(),
-        ),
-        (route) => false);
-  }
-
-  Future<void> saveInputData(BuildContext context) async {
-    if (userRealName != '') {
-      ref.read(registeredUserInfoProvider.notifier).setUserName(userRealName);
-    }
-    // getting a directory path for saving
-    if (userProfileImageFile != null) {
-      final Directory directory = await getApplicationDocumentsDirectory();
-      final String userProfileImageFilePath = directory.path + '/user_profile_image.png';
-      final File newImage = await userProfileImageFile!.copy(userProfileImageFilePath);
-      logger.w(directory);
-      ref.read(registeredUserInfoProvider.notifier).setUserImage(userProfileImageFilePath);
-    }
   }
 }
