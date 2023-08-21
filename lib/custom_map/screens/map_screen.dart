@@ -12,6 +12,7 @@ import 'package:frontend/custom_map/model/friend_info_model.dart';
 import 'package:frontend/custom_map/components/custom_google_map.dart';
 import 'package:frontend/custom_map/components/marker/google_user_marker.dart';
 import 'package:frontend/custom_map/model/static_info_model.dart';
+import 'package:frontend/custom_map/repository/live_info_repository.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
@@ -35,6 +36,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   late GoogleMapController googleMapController;
   double cameraZoom = 15;
   final List<Marker> markers = [];
+
+  late Timer markerUpdateTimer;
 
   CameraPosition initCameraPosition = const CameraPosition(
     target: LatLng(
@@ -60,6 +63,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         .listen((Position position) {
       updateMapCameraPosition(position);
       postMyLocation(position);
+    });
+    markerUpdateTimer = Timer.periodic(Duration(seconds: 5), (timer) {
+      getMarkerLiveData();
     });
   }
 
@@ -202,7 +208,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 
   void updateMarkerLocation(UserLiveInfoModel friendInfoModel) {
-    logger.w("updateMarkerLocation ${friendInfoModel.userId}");
     int index = markers.indexWhere(
       (element) => element.markerId.value == friendInfoModel.userId,
     );
@@ -213,13 +218,26 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       );
       if (markers[index].position != newLatLng) {
         markers[index] = markers[index].copyWith(positionParam: newLatLng);
-      } else {
-        logger.w("위치가 같음 ${friendInfoModel.userId}");
-      }
+      } else {}
     } else {
       logger.w("index 못찾음 ${friendInfoModel.userId}");
       // TODO: 정보 없던 친구의 위치가 들어온 상황이므로, getInfo를 다시 수행해야함.
     }
+  }
+
+  void getMarkerLiveData() async {
+    try {
+      var response = await getLocationAndBattery();
+      if (response != null) {
+        setState(() {
+          updateFriendLocation(response.friendInfoList);
+        });
+      }
+    } catch (e) {}
+  }
+
+  Future<FriendLocationAndBattery> getLocationAndBattery() async {
+    return ref.watch(liveInfoRepositoryProvider).getFriendLocationAndBattery();
   }
 
   @override
@@ -242,13 +260,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             },
           ),
         ),
-        UpdateMarkersButton(
-          updateMarkerLocation: (friendLiveInfoList) {
-            setState(() {
-              updateFriendLocation(friendLiveInfoList);
-            });
-          },
-        )
       ],
     );
   }
