@@ -1,2 +1,1 @@
-const String userNameRegisterNote =
-    "Zeppy를 이용하기 위해서\n사용자의 이름을 입력해야\n서비스를 이용할 수 있다는 내용";
+const String userNameRegisterNote = "이 앱은 앱이 종료되었거나 사용 중이 아닐 때도 \n위치 데이터를 수집하여 \n 유저가 친구를 추가한 사람에게만 알려주는 기능을 지원합니다.";

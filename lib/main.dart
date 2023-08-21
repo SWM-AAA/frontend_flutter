@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/screens/splash_screen.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_android/image_picker_android.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 
 void main() async {
-  // 웹 환경에서 카카오 로그인을 정상적으로 완료하려면 runApp() 호출 전 아래 메서드 호출 필요
-  WidgetsFlutterBinding.ensureInitialized();
+  //  runApp() 호출 전 아래 메서드 호출 필요
 
-  await dotenv.load(fileName: '.env');
+  WidgetsFlutterBinding.ensureInitialized(); // 웹 환경에서 카카오 로그인을 정상적으로 완료
 
-  // runApp() 호출 전 Flutter SDK 초기화
+  await dotenv.load(fileName: '.env'); // .env 파일을 읽어서 환경변수로 등록
+
+  // Flutter SDK 초기화
   KakaoSdk.init(
     nativeAppKey: dotenv.env['KAKAO_NATIVE_APP_KEY']!,
   );
-// android photo picker를 사용하기 위한 설정, runApp() 호출 전 아래 메서드 호출 필요
+  // android photo picker를 사용하기 위한 설정
   final ImagePickerPlatform imagePickerImplementation = ImagePickerPlatform.instance;
   if (imagePickerImplementation is ImagePickerAndroid) {
     imagePickerImplementation.useAndroidPhotoPicker = true;
