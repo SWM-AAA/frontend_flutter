@@ -1,16 +1,16 @@
 // 터미널 명령어 flutter pub run build_runner build
 
 class FriendLocationAndBattery {
-  late List<FriendInfoModel> friendInfoList;
+  late List<UserLiveInfoModel> friendInfoList;
   FriendLocationAndBattery({
     required this.friendInfoList,
   });
 
   factory FriendLocationAndBattery.fromJson(Map<String, dynamic> json) {
-    final List<FriendInfoModel> friendInfoList = [];
+    final List<UserLiveInfoModel> friendInfoList = [];
     json['result'].forEach(
       (key, value) {
-        final friendInfo = FriendInfoModel.fromJson(
+        final friendInfo = UserLiveInfoModel.fromJson(
           {key: value},
         );
         friendInfoList.add(friendInfo);
@@ -22,16 +22,16 @@ class FriendLocationAndBattery {
   }
 }
 
-class FriendInfoModel {
+class UserLiveInfoModel {
   late String userId;
   late LiveInfoModel liveInfo;
-  FriendInfoModel({
+  UserLiveInfoModel({
     required this.userId,
     required this.liveInfo,
   });
 
-  factory FriendInfoModel.fromJson(Map<String, dynamic> json) {
-    return FriendInfoModel(
+  factory UserLiveInfoModel.fromJson(Map<String, dynamic> json) {
+    return UserLiveInfoModel(
       userId: json.keys.first,
       liveInfo: LiveInfoModel.fromJson(json.values.first),
     );

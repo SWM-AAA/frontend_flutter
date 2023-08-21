@@ -3,14 +3,11 @@ import 'dart:io';
 import 'dart:ui';
 import 'dart:ui' as ui;
 import 'package:http/http.dart' as http;
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/custom_map/const/marker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:logger/logger.dart';
 
 Future<BitmapDescriptor> userMarkerIcon(String imagePath, String userName, ImageType imageType) async {
   final Size size = Size(200, 200);
@@ -141,7 +138,6 @@ Future<void> paintProfileImage(Size size, Canvas canvas, String imagePath, Image
 }
 
 Future<ui.Image> getImageFromPath(String imagePath, ImageType imageType) async {
-  var logger = Logger();
   late Uint8List uint8listData;
 
   try {

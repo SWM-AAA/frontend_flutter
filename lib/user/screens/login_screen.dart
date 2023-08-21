@@ -6,21 +6,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 
 import 'package:frontend/common/components/animated_app_title.dart';
+import 'package:frontend/common/consts/api.dart';
+import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
-import 'package:frontend/common/screens/root_tab.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
-
-import 'package:frontend/user/components/apple_login_button.dart';
-import 'package:frontend/user/components/google_login_button.dart';
-
-import 'package:frontend/user/components/kakao_login_button.dart';
+import 'package:frontend/user/components/login_button/google_login_button.dart';
+import 'package:frontend/user/components/login_button/kakao_login_button.dart';
 import 'package:frontend/user/screens/register_dialog_screen.dart';
+import 'package:frontend/user/utils/route.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:logger/logger.dart';
-
-import '../../common/consts/data.dart';
-import '../utils/oauth_apis.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -33,26 +29,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   var logger = Logger();
   @override
   Widget build(BuildContext context) {
-    final dio = ref.watch(dioProvider);
     final secureStorage = ref.watch(secureStorageProvider);
-
-    void moveToRootTab() {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (_) => const RootTab(),
-          ),
-          (route) => false);
-    }
-
-    Future<bool> requestCheckUserRegistered(User user) async {
-      if (user.kakaoAccount?.email != null) {
-        final checkRegisterResp = await dio
-            .post(dotenv.env['AAA_PUBLIC_API_BASE'].toString(), data: {'memberEmail': '${user.kakaoAccount?.email}'});
-        return checkRegisterResp.data['isRegistered'];
-      } else {
-        throw Exception('email 정보 없음');
-      }
-    }
 
     void showRegisterDialog() {
       showDialog(
@@ -97,7 +74,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         if (isFirst == 'true') {
           showRegisterDialog();
         } else {
-          moveToRootTab();
+          moveToRootTab(context);
         }
       } catch (e) {
         log(e.toString());
@@ -105,7 +82,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     void oAuthLoginPressed(API api) {
-      signInOAuth(getApiUri(api));
+      signInOAuth(getApi(api));
     }
 
     void onKakaoLoginButtonClick() {

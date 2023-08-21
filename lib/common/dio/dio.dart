@@ -23,7 +23,6 @@ class CustomInterceptor extends Interceptor {
 
   final FlutterSecureStorage secureStorage;
 
-  // constructor
   CustomInterceptor({
     required this.secureStorage,
   });
@@ -97,9 +96,8 @@ class CustomInterceptor extends Interceptor {
     // TODO: 해더를 보고 토큰을 갱신시킨다.
     var logger = Logger();
     logger.i("onResponse");
-    logger.i(response);
-    logger.i(response.headers);
-    logger.i(response.data);
+    logger.i(response.headers, response.data);
+
     super.onResponse(response, handler);
   }
 
@@ -110,25 +108,7 @@ class CustomInterceptor extends Interceptor {
     var logger = Logger();
     logger.e(err);
     logger.e(err.response?.data);
-    /*
-    final refreshToken = await secureStorage.read(key: REFRESH_TOKEN_KEY);
 
-    // TODO <dio.dart> refresh token 없을 때 처리
-
-    // kakao accessToken이 유효한지
-    // 유효하지 않다면 kakao refreshToken으로 갱신시켜서 보내주고
-    // kakao refreshToken의 유효기간이 1달남았다면 refreshToken갱신후 보내주기
-    if (refreshToken == null) {
-      return handler.reject(err);
-    }
-
-    final isStatus401 = err.response?.statusCode == 401;
-    final isPathAccessTokenRefresh = err.requestOptions.path == '/auth/token';
-
-    if (isStatus401 && !isPathAccessTokenRefresh) {
-      return autoRefreshAccessToken(err: err, handler: handler);
-    }
-    */
     super.onError(err, handler);
   }
 }

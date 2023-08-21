@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
-import 'package:frontend/common/riverpod/register_dialog_screen.dart';
+import 'package:frontend/common/provider/register_dialog_screen.dart';
 import 'package:frontend/common/screens/bottom_navigation_test_screen.dart';
 import 'package:frontend/custom_map/screens/map_screen.dart';
 
-class RootTab extends ConsumerStatefulWidget {
+class RootTab extends StatefulWidget {
   const RootTab({super.key});
 
   @override
-  ConsumerState<RootTab> createState() => _RootTabState();
+  State<RootTab> createState() => _RootTabState();
 }
 
-class _RootTabState extends ConsumerState<RootTab> with SingleTickerProviderStateMixin {
+class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
   late TabController tabController;
   int bottomNavigationBarCurrentIndex = 1;
 
@@ -44,9 +44,6 @@ class _RootTabState extends ConsumerState<RootTab> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    final userNameWatch = ref.watch(registeredUserInfoProvider).userName;
-    final userProfileImagePathWatch = ref.watch(registeredUserInfoProvider).userProfileImagePath;
-
     return DefaultLayout(
       title: 'Zeppy',
       bottomNavigationBar: BottomNavigationBar(
@@ -79,7 +76,7 @@ class _RootTabState extends ConsumerState<RootTab> with SingleTickerProviderStat
         ],
       ),
       child: TabBarView(physics: const NeverScrollableScrollPhysics(), controller: tabController, children: [
-        MapScreen(userName: userNameWatch.toString(), userProfileImagePath: userProfileImagePathWatch.toString()),
+        MapScreen(),
         BottomNavigationTestScreen(testScreenName: '홈 스크린'),
       ]),
     );
