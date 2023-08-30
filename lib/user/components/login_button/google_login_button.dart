@@ -6,7 +6,7 @@ class GoogleLoginButton extends StatelessWidget {
 
   const GoogleLoginButton({
     Key? key,
-    this.width = 320,
+    this.width = 280,
     this.onPressed,
   }) : super(key: key);
 
@@ -14,11 +14,10 @@ class GoogleLoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
-      height: 60,
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Image.asset(
-          'assets/images/google/login_button.png',
+      child: InkWell(
+        onTap: onPressed,
+        child: Image.asset(
+          'assets/images/google/google_login_button.png',
         ),
       ),
     );

@@ -6,7 +6,7 @@ class KakaoLoginButton extends StatelessWidget {
 
   const KakaoLoginButton({
     Key? key,
-    this.width = 320,
+    this.width = 280,
     this.onPressed,
   }) : super(key: key);
 
@@ -14,11 +14,10 @@ class KakaoLoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
-      height: 80,
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Image.asset(
-          'assets/images/kakao/kakao_login_medium_narrow.png',
+      child: InkWell(
+        onTap: onPressed,
+        child: Image.asset(
+          'assets/images/kakao/kakao_login_button.png',
         ),
       ),
     );
