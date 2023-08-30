@@ -13,10 +13,6 @@ void main() async {
 
   await dotenv.load(fileName: '.env'); // .env 파일을 읽어서 환경변수로 등록
 
-  // Flutter SDK 초기화
-  KakaoSdk.init(
-    nativeAppKey: dotenv.env['KAKAO_NATIVE_APP_KEY']!,
-  );
   // android photo picker를 사용하기 위한 설정
   final ImagePickerPlatform imagePickerImplementation = ImagePickerPlatform.instance;
   if (imagePickerImplementation is ImagePickerAndroid) {
