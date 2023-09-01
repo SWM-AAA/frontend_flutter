@@ -21,3 +21,4 @@ samples, guidance on mobile development, and a full API reference.
 ![permission_first_background](https://github.com/SWM-AAA/frontend_flutter/assets/26702430/239972ec-9f85-4861-8fb8-f21fc4e027d9)
 ![login_blue_background](https://github.com/SWM-AAA/frontend_flutter/assets/26702430/8fa490e2-12e9-4989-a200-463712f5b2e9)
 <img width="243" alt="ldy-notion-profile" src="https://github.com/SWM-AAA/frontend_flutter/assets/26702430/34d1d51e-532c-4a55-9a79-520c912e4d6a">
+<img width="374" alt="yhs-notion-profile" src="https://github.com/SWM-AAA/frontend_flutter/assets/26702430/741d2e52-a7ce-4221-b6d6-e410f785efbe">
