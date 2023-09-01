@@ -24,3 +24,4 @@ samples, guidance on mobile development, and a full API reference.
 <img width="374" alt="yhs-notion-profile" src="https://github.com/SWM-AAA/frontend_flutter/assets/26702430/741d2e52-a7ce-4221-b6d6-e410f785efbe">
 ![zeppy-logo](https://github.com/SWM-AAA/frontend_flutter/assets/26702430/ca9b0469-3f90-4baf-a077-f138b8223d6b)
 ![SWM-LOGO](https://github.com/SWM-AAA/frontend_flutter/assets/26702430/b1eed9c5-26eb-4176-8a94-0d4592167e30)
+![khh-notion-profile](https://github.com/SWM-AAA/frontend_flutter/assets/26702430/ec44614f-9eb8-4eba-b3d9-677ca27b49bf)
