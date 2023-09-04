@@ -4,7 +4,7 @@ import 'package:frontend/common/provider/register_dialog_screen.dart';
 import 'package:frontend/common/screens/root_tab.dart';
 import 'package:frontend/permission/components/dialog/position_explain_dialog.dart';
 import 'package:frontend/permission/components/dialog/position_permission_dialog.dart';
-import 'package:frontend/permission/screens/permission_success_screen.dart';
+import 'package:frontend/permission/screens/permission_complete_screen.dart';
 import 'package:frontend/permission/screens/position_permission_screen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
@@ -56,7 +56,7 @@ class BottomPinnedPositionExplain extends ConsumerWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const PermissionSuccessScreen(),
+            builder: (context) => const PermissionCompleteScreen(),
           ),
         );
       }

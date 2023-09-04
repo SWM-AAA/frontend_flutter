@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/common/screens/root_tab.dart';
 
-class CompletePermissionScreen extends StatelessWidget {
-  const CompletePermissionScreen({super.key});
+class PermissionCompleteExplain extends StatelessWidget {
+  const PermissionCompleteExplain({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,13 @@ class CompletePermissionScreen extends StatelessWidget {
             height: 24,
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (_) => const RootTab(),
+                  ),
+                  (route) => false);
+            },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(
                 horizontal: 32,
@@ -48,7 +55,7 @@ class CompletePermissionScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(22),
               ),
             ),
-            child: const Text('다음',
+            child: const Text('시작하기',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
