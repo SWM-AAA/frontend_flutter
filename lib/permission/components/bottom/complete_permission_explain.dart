@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/common/provider/register_dialog_screen.dart';
 
-class BottomPinnedPositionExplain extends ConsumerWidget {
-  const BottomPinnedPositionExplain({super.key});
+class CompletePermissionScreen extends StatelessWidget {
+  const CompletePermissionScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final userName = ref.watch(registeredUserInfoProvider).userName;
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(left: 20, right: 20, bottom: 120),
       child: Column(
@@ -16,7 +13,7 @@ class BottomPinnedPositionExplain extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '$userName님,\n위치를 알려주세요',
+            '모두 완료되었습니다!',
             style: TextStyle(
               color: Colors.black,
               fontSize: 36,
@@ -29,7 +26,7 @@ class BottomPinnedPositionExplain extends ConsumerWidget {
             height: 24,
           ),
           const Text(
-            'Zeppy 앱을 통해 친구의 앱이 사용 중이 아닐 때도\n항상 친구의 위치를 확인할 수 있습니다.\n위치를 어떻게 관리하나요?',
+            '친구들과 함께 일상을 공유할 준비되셨나요?',
             style: TextStyle(
               color: Color(0xFF2C72FF),
               fontSize: 14,

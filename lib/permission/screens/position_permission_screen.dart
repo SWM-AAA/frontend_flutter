@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
-import 'package:frontend/permission/components/bottom_pinned_position_explain.dart';
+import 'package:frontend/permission/components/bottom/bottom_pinned_position_explain.dart';
 
 class PositionPermissionScreen extends StatelessWidget {
   const PositionPermissionScreen({super.key});
