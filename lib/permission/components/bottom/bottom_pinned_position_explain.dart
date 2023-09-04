@@ -1,16 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/provider/register_dialog_screen.dart';
+import 'package:frontend/common/screens/root_tab.dart';
 import 'package:frontend/permission/components/dialog/position_explain_dialog.dart';
 import 'package:frontend/permission/components/dialog/position_permission_dialog.dart';
+import 'package:frontend/permission/screens/permission_success_screen.dart';
 import 'package:frontend/permission/screens/position_permission_screen.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:logger/logger.dart';
 
 class BottomPinnedPositionExplain extends ConsumerWidget {
-  const BottomPinnedPositionExplain({super.key});
+  const BottomPinnedPositionExplain({
+    super.key,
+  });
+
+  Future<bool> checkLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return false;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      return requestLocationPermission();
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> requestLocationPermission() async {
+    LocationPermission permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      return false;
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userName = ref.watch(registeredUserInfoProvider).userName;
+
+    void onClickNext() async {
+      if (await checkLocationPermission() == false) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return PositionPermissionDialog();
+          },
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PermissionSuccessScreen(),
+          ),
+        );
+      }
+    }
+
     return Container(
       padding: const EdgeInsets.only(left: 20, right: 20, bottom: 120),
       child: Column(
@@ -63,12 +114,7 @@ class BottomPinnedPositionExplain extends ConsumerWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return PositionPermissionDialog();
-                },
-              );
+              onClickNext();
             },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(
