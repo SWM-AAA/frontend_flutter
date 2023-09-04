@@ -76,7 +76,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         if (isFirst == 'true') {
           showRegisterDialog();
         } else {
-          moveToRootTab(context);
+          moveToPermissionScreen(context);
         }
       } catch (e) {
         log(e.toString());
