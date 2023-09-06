@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/common/components/animated_app_title.dart';
+import 'package:frontend/common/components/bottom_pinned_introduce.dart';
 import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
-import 'package:frontend/common/screens/root_tab.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
 import 'package:frontend/user/screens/login_screen.dart';
 
@@ -53,7 +52,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       backgroundDecorationImage: DecorationImage(
         fit: BoxFit.cover,
         image: AssetImage(
-          'assets/images/backgrounds/sample_background.png',
+          'assets/images/backgrounds/splash.png',
         ),
       ),
       child: SafeArea(
@@ -64,23 +63,20 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             horizontal: 16.0,
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AnimatedAppName(),
-                      SizedBox(
-                        height: 56.0,
-                      ),
-                      CircularProgressIndicator(),
-                    ],
-                  ),
-                ),
+              SizedBox(
+                height: 32,
               ),
+              Image(
+                image: AssetImage('assets/images/logos/zeppy_logo.png'),
+                height: 30,
+              ),
+              Expanded(
+                  child: SizedBox(
+                height: 1,
+              )),
+              BottomPinnedIntroduce()
             ],
           ),
         ),

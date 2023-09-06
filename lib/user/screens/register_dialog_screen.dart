@@ -236,7 +236,7 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
                   await postRegisterData(dio, secureStorage);
                   await saveRegisterData(context);
 
-                  moveToRootTab(context);
+                  moveToPermissionScreen(context);
                 },
                 child: const Text('Zeppy 시작하기'),
               ),

@@ -11,8 +11,10 @@ import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
+import 'package:frontend/permission/screens/position_permission_screen.dart';
 import 'package:frontend/user/components/login_button/google_login_button.dart';
 import 'package:frontend/user/components/login_button/kakao_login_button.dart';
+import 'package:frontend/user/components/login_policy_text.dart';
 import 'package:frontend/user/screens/register_dialog_screen.dart';
 import 'package:frontend/user/utils/route.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
@@ -74,7 +76,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         if (isFirst == 'true') {
           showRegisterDialog();
         } else {
-          moveToRootTab(context);
+          moveToPermissionScreen(context);
         }
       } catch (e) {
         log(e.toString());
@@ -93,11 +95,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       oAuthLoginPressed(API.googleLogin);
     }
 
+    void moveToPermission() {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => const PositionPermissionScreen(),
+          ),
+          (route) => false);
+    }
+
     return DefaultLayout(
       backgroundDecorationImage: const DecorationImage(
         fit: BoxFit.cover,
         image: AssetImage(
-          'assets/images/backgrounds/sample_background.png',
+          'assets/images/backgrounds/login_blue_background.png',
         ),
       ),
       child: SafeArea(
@@ -105,32 +115,46 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         bottom: false,
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
+            horizontal: 40.0,
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const AnimatedAppName(),
-                    Column(
-                      children: [
-                        KakaoLoginButton(
-                          onPressed: onKakaoLoginButtonClick,
-                        ),
-                        GoogleLoginButton(
-                          onPressed: onGoogleLoginButtonClick,
-                        ),
-                      ],
-                    )
-                  ],
+              SizedBox(
+                height: 308,
+              ),
+              Text(
+                '친구들과\n위치를\n공유해요',
+                style: TextStyle(
+                  color: Color(0xFF22252D),
+                  fontSize: 40,
+                  fontWeight: FontWeight.w600,
+                  height: 1.20,
                 ),
+              ),
+              SizedBox(
+                height: 32,
+              ),
+              SizedBox(
+                height: 32,
+              ),
+              Column(
+                children: [
+                  KakaoLoginButton(
+                    onPressed: onKakaoLoginButtonClick,
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  GoogleLoginButton(
+                    onPressed: onGoogleLoginButtonClick,
+                  ),
+                  SizedBox(
+                    height: 32,
+                  ),
+                  LoginPolicyText(),
+                ],
               ),
             ],
           ),
