@@ -15,11 +15,12 @@ class BasicLoginButton extends StatelessWidget {
       width: width,
       height: 50,
       child: ElevatedButton(
-        style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.black54)),
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.black54)),
         onPressed: () {
           onPressed!();
         },
-        child: Text('LOGIN',
+        child: const Text('LOGIN',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
