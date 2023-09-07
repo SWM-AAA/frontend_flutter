@@ -3,7 +3,7 @@ class FriendRequestListModel {
   FriendRequestListModel({
     required this.friendRequestList,
   });
-  factory FriendRequestListModel.fromJson(List<dynamic> json) {
+  factory FriendRequestListModel.fromJson(List<Map<String, Object>> json) {
     final List<FriendRequestModel> friendRequestList = [];
     json.forEach(
       (element) {
@@ -20,7 +20,7 @@ class FriendRequestListModel {
 }
 
 class FriendRequestModel {
-  late String userId;
+  late int userId;
   late String nickname;
   late String userTag;
   late String imageUrl;
@@ -32,7 +32,7 @@ class FriendRequestModel {
   });
   factory FriendRequestModel.fromJson(Map<String, dynamic> json) {
     return FriendRequestModel(
-      userId: 'user_' + json['userId'].toString(),
+      userId: json['userId'],
       nickname: json['nickname'],
       userTag: json['userTag'],
       imageUrl: json['imageUrl'],

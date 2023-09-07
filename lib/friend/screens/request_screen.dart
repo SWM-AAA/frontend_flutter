@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
-import 'package:frontend/friend/screens/search_screen.dart';
 import 'package:frontend/friend/widgets/add_friend_card.dart';
 
 import '../widgets/friend_request_list.dart';
@@ -32,24 +31,16 @@ class RequestScreen extends StatelessWidget {
               child: ListView(
                 children: [
                   AddFreindCard(
-                      icon: Icons.badge_outlined,
-                      name: '네임태그로 친구추가',
-                      clickHandler: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const FriendSearchScreen()),
-                        );
-                      }),
+                    icon: Icons.badge_outlined,
+                    name: '네임태그로 친구추가',
+                  ),
                   AddFreindCard(
                     icon: Icons.call,
                     name: '전화번호로 친구추가',
-                    clickHandler: () {},
                   ),
                   AddFreindCard(
                     icon: Icons.edgesensor_high,
                     name: '흔들어서 추가',
-                    clickHandler: () {},
                   ),
                   const SizedBox(
                     height: 10,
