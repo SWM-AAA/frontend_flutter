@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
+import 'package:frontend/friend/model/friend_request_model.dart';
 import 'package:frontend/friend/widgets/add_friend_card.dart';
 
 import '../widgets/friend_request_list.dart';
@@ -54,7 +55,7 @@ class RequestScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    child: const Column(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
@@ -67,66 +68,59 @@ class RequestScreen extends StatelessWidget {
                         SizedBox(
                           height: 10,
                         ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height,
+                          child: FutureBuilder<FriendRequestListModel>(
+                            future: testGetFriendRequestList(),
+                            builder: (context, AsyncSnapshot<FriendRequestListModel> snapshot) {
+                              if (snapshot.hasError) {
+                                return Text("${snapshot.error}");
+                              } else if (!snapshot.hasData) {
+                                return Text("친구 신청이 없습니다.");
+                              } else if (snapshot.hasData) {
+                                // return Text("data");
+                                final friendRequestList = snapshot.data!.friendRequestList;
+                                return ListView.separated(
+                                  // shrinkWrap: true,
+                                  itemCount: snapshot.data!.friendRequestList.length,
+                                  itemBuilder: (context, index) {
+                                    return FriendRequestList(
+                                      name: friendRequestList[index].nickname,
+                                      nameTag: friendRequestList[index].userTag,
+                                    );
+                                  },
+                                  separatorBuilder: (_, index) {
+                                    return SizedBox(
+                                      height: 1,
+                                    );
+                                  },
+                                );
+                              } else {
+                                return CircularProgressIndicator();
+                              }
+                            },
+                          ),
                         ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
-                        ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
-                        ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
-                        ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
-                        ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
-                        ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
-                        ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
-                        ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
-                        ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
-                        ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
-                        ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
-                        ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
-                        ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
-                        ),
-                        FriendRequestList(
-                          name: '김모미',
-                          nameTag: '김모미#0009',
-                        ),
+                        // FriendRequestList(
+                        //   name: '김모미',
+                        //   nameTag: '김모미#0009',
+                        // ),
+                        // FriendRequestList(
+                        //   name: '김모미',
+                        //   nameTag: '김모미#0009',
+                        // ),
+                        // FriendRequestList(
+                        //   name: '김모미',
+                        //   nameTag: '김모미#0009',
+                        // ),
+                        // FriendRequestList(
+                        //   name: '김모미',
+                        //   nameTag: '김모미#0009',
+                        // ),
+                        // FriendRequestList(
+                        //   name: '김모미',
+                        //   nameTag: '김모미#0009',
+                        // ),
                       ],
                     ),
                   ),
@@ -136,6 +130,62 @@ class RequestScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Future<FriendRequestListModel> testGetFriendRequestList() async {
+    final friendRequestList = [
+      FriendRequestModel(
+        userId: 1,
+        nickname: '김모미',
+        userTag: '김모미#0001',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 2,
+        nickname: '나모미',
+        userTag: '나모미#0002',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 3,
+        nickname: '다모미',
+        userTag: '다모미#0003',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 4,
+        nickname: '라모미',
+        userTag: '라모미#0004',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+    ];
+    return FriendRequestListModel(
+      friendRequestList: friendRequestList,
     );
   }
 }
