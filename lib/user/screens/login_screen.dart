@@ -62,8 +62,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           callbackUrlScheme: APP_SCHEME,
         );
 
-        final accessToken = Uri.parse(webAuthResp).queryParameters[ACCESS_TOKEN_KEY];
-        final refreshToken = Uri.parse(webAuthResp).queryParameters[REFRESH_TOKEN_KEY];
+        final accessToken =
+            Uri.parse(webAuthResp).queryParameters[ACCESS_TOKEN_KEY];
+        final refreshToken =
+            Uri.parse(webAuthResp).queryParameters[REFRESH_TOKEN_KEY];
 
         final isFirst = Uri.parse(webAuthResp).queryParameters[IS_FIRST];
         logger.i(accessToken);
@@ -121,10 +123,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 308,
               ),
-              Text(
+              const Text(
                 '친구들과\n위치를\n공유해요',
                 style: TextStyle(
                   color: Color(0xFF22252D),
@@ -133,10 +135,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   height: 1.20,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 32,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 32,
               ),
               Column(
@@ -144,16 +146,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   KakaoLoginButton(
                     onPressed: onKakaoLoginButtonClick,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 12,
                   ),
                   GoogleLoginButton(
                     onPressed: onGoogleLoginButtonClick,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 32,
                   ),
-                  LoginPolicyText(),
+                  const LoginPolicyText(),
                 ],
               ),
             ],
