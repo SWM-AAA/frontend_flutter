@@ -69,14 +69,17 @@ class RequestScreen extends StatelessWidget {
                           AddFreindCard(
                             icon: Icons.badge_outlined,
                             name: '네임태그로 친구추가',
+                            clickHandler: () {},
                           ),
                           AddFreindCard(
                             icon: Icons.call,
                             name: '전화번호로 친구추가',
+                            clickHandler: () {},
                           ),
                           AddFreindCard(
                             icon: Icons.edgesensor_high,
                             name: '흔들어서 추가',
+                            clickHandler: () {},
                           ),
                           const SizedBox(
                             height: 10,
@@ -122,81 +125,81 @@ class RequestScreen extends StatelessWidget {
 
   Future<FriendRequestListModel> testGetFriendRequestList() async {
     final friendRequestList = [
-      //   FriendRequestModel(
-      //     userId: 1,
-      //     nickname: '김모미',
-      //     userTag: '김모미#0001',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 2,
-      //     nickname: '나모미',
-      //     userTag: '나모미#0002',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 3,
-      //     nickname: '다모미',
-      //     userTag: '다모미#0003',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 4,
-      //     nickname: '라모미',
-      //     userTag: '라모미#0004',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
+      FriendRequestModel(
+        userId: 1,
+        nickname: '김모미',
+        userTag: '김모미#0001',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 2,
+        nickname: '나모미',
+        userTag: '나모미#0002',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 3,
+        nickname: '다모미',
+        userTag: '다모미#0003',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 4,
+        nickname: '라모미',
+        userTag: '라모미#0004',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
     ];
     return FriendRequestListModel(
-      friendRequestList: [],
+      friendRequestList: friendRequestList,
     );
   }
 }

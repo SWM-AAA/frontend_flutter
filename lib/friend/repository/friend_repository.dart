@@ -6,6 +6,8 @@ import 'package:frontend/friend/model/friend_model.dart';
 import 'package:frontend/friend/model/friend_request_model.dart';
 import 'package:frontend/friend/model/friend_response_model.dart';
 import 'package:frontend/friend/model/post_friend_request_model.dart';
+import 'package:frontend/friend/model/post_search_user_tag_model.dart';
+import 'package:frontend/friend/model/search_friend_to_request_model.dart';
 import 'package:retrofit/retrofit.dart';
 part 'friend_repository.g.dart';
 
@@ -33,4 +35,7 @@ abstract class FriendRepository {
 
   @POST('/api/v1/friends/response')
   Future<void> postFriendRequest(@Body() PostFriendRequestModel postFriendRequestModel);
+
+  @GET('/api/v1/users/search/usertag')
+  Future<HttpResponse<SearchFriendToRequestModel>> getSearchUserTag(@Query('userTag') String userTag);
 }
