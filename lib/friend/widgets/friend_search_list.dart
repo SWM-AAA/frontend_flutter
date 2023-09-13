@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/friend/widgets/friend_dialog.dart';
 
 class FreindSearchList extends StatelessWidget {
   final String name, nameTag;
@@ -39,29 +40,35 @@ class FreindSearchList extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            alignment: AlignmentDirectional.center,
-            width: 100,
-            height: 42,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(23),
+          GestureDetector(
+            onTap: () {
+              showDialog(
+                  context: context, builder: (_) => const FriendDialog());
+            },
+            child: Container(
+              alignment: AlignmentDirectional.center,
+              width: 100,
+              height: 42,
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.circular(23),
+              ),
+              child: isFriendRequestSent
+                  ? const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '요청중',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        Icon(Icons.close),
+                      ],
+                    )
+                  : const Text(
+                      '친구요청',
+                      style: TextStyle(fontSize: 20),
+                    ),
             ),
-            child: isFriendRequestSent
-                ? const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '요청중',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      Icon(Icons.close),
-                    ],
-                  )
-                : const Text(
-                    '친구요청',
-                    style: TextStyle(fontSize: 20),
-                  ),
           ),
         ],
       ),

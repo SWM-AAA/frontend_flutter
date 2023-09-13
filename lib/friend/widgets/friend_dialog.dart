@@ -52,14 +52,13 @@ class FriendDialog extends StatelessWidget {
                           ),
                         ),
                       ),
-                      onPressed: () {}),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      }),
                   FilledButton(
                       style: const ButtonStyle(
                         backgroundColor:
                             MaterialStatePropertyAll(Color(0xff3B71FE)),
-                        // fixedSize: MaterialStatePropertyAll(
-                        //   Size(125, 45),
-                        // ),
                       ),
                       child: const Padding(
                         padding:
