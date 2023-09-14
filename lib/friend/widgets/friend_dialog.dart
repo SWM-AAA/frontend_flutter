@@ -31,7 +31,7 @@ class FriendDialog extends StatelessWidget {
                 height: 24,
               ),
               OverflowBar(
-                alignment: MainAxisAlignment.spaceEvenly,
+                alignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   FilledButton(
                       style: const ButtonStyle(
@@ -42,7 +42,7 @@ class FriendDialog extends StatelessWidget {
                       ),
                       child: const Padding(
                         padding:
-                            EdgeInsets.symmetric(vertical: 14, horizontal: 40),
+                            EdgeInsets.symmetric(vertical: 14, horizontal: 32),
                         child: Text(
                           '취소',
                           style: TextStyle(
@@ -61,7 +61,7 @@ class FriendDialog extends StatelessWidget {
                       onPressed: onClickOK,
                       child: const Padding(
                         padding:
-                            EdgeInsets.symmetric(vertical: 14, horizontal: 40),
+                            EdgeInsets.symmetric(vertical: 14, horizontal: 32),
                         child: Text(
                           '확인',
                           style: TextStyle(
