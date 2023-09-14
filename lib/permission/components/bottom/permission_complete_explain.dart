@@ -13,7 +13,7 @@ class PermissionCompleteExplain extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             '모두 완료되었습니다!',
             style: TextStyle(
               color: Colors.black,
