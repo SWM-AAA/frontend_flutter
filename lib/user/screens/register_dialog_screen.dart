@@ -98,7 +98,7 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
       );
       logger.w("postRegisterData response : ${response.data}");
 
-      await updateAccessKey(response, secureStorage);
+      await updateUserInfo(response, secureStorage);
 
       dio.options.contentType = 'application/json';
     } catch (e) {
@@ -128,11 +128,14 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
     return data.buffer.asUint8List();
   }
 
-  Future<void> updateAccessKey(
-      Response<dynamic> response, secureStorage) async {
+  Future<void> updateUserInfo(Response<dynamic> response, secureStorage) async {
     var userInformationModel = UserInformationModel.fromJson(response.data);
     await secureStorage.write(
         key: ACCESS_TOKEN_KEY, value: userInformationModel.access_token);
+    await secureStorage.write(
+        key: USER_TAG, value: userInformationModel.user_tag);
+    await secureStorage.write(
+        key: USER_ID, value: userInformationModel.user_id);
   }
 
   Future<void> saveRegisterData(BuildContext context) async {
