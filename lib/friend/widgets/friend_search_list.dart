@@ -43,7 +43,16 @@ class FreindSearchList extends StatelessWidget {
           GestureDetector(
             onTap: () {
               showDialog(
-                  context: context, builder: (_) => const FriendDialog());
+                context: context,
+                builder: (_) => FriendDialog(
+                  text: isFriendRequestSent
+                      ? '$nameTag에게\n 요청을 취소하겠습니까?'
+                      : '$nameTag에게\n친구를 요청하시겠습니까?',
+                  onClickOK: () {
+                    print('ok');
+                  },
+                ),
+              );
             },
             child: Container(
               alignment: AlignmentDirectional.center,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:frontend/friend/widgets/friend_dialog.dart';
 
 class FriendRequestList extends StatelessWidget {
   final String name, nameTag;
@@ -8,19 +10,19 @@ class FriendRequestList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
       child: Row(
         children: [
           Container(
-            width: 54,
-            height: 54,
+            width: 56,
+            height: 56,
             decoration: BoxDecoration(
               color: Colors.black26,
               borderRadius: BorderRadius.circular(23),
             ),
           ),
           const SizedBox(
-            width: 20,
+            width: 12,
           ),
           Expanded(
             child: Column(
@@ -29,32 +31,86 @@ class FriendRequestList extends StatelessWidget {
                 Text(
                   name,
                   style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.w500),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Pretendard',
+                  ),
                 ),
-                Text(nameTag),
+                const SizedBox(
+                  height: 6,
+                ),
+                Text(
+                  nameTag,
+                  style: const TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 15,
+                      letterSpacing: -0.3),
+                ),
               ],
             ),
           ),
+          // Container(
+          //   width: 42,
+          //   height: 42,
+          //   decoration: BoxDecoration(
+          //     color: const Color(0xffB4F5AE),
+          //     borderRadius: BorderRadius.circular(23),
+          //   ),
+          //   child: const Icon(Icons.circle_outlined),
+          // ),
+          // const SizedBox(
+          //   width: 10,
+          // ),
           Container(
-            width: 42,
-            height: 42,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
-              color: const Color(0xffB4F5AE),
-              borderRadius: BorderRadius.circular(23),
+              color: const Color(0xff2d73ff),
+              borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(Icons.circle_outlined),
+            child: IconButton(
+                icon: const Icon(
+                  Icons.check,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => FriendDialog(
+                      text: '$nameTag님의\n친구요청을 수락하시겠습니까?',
+                      onClickOK: () {
+                        print('ok');
+                      },
+                    ),
+                  );
+                }),
           ),
           const SizedBox(
-            width: 10,
+            width: 8,
           ),
           Container(
-            width: 42,
-            height: 42,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
-              color: const Color(0xffFFCACA),
-              borderRadius: BorderRadius.circular(23),
+              color: const Color(0xffb1b5c3),
+              borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(Icons.close),
+            child: IconButton(
+                icon: const Icon(
+                  Icons.close,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => FriendDialog(
+                      text: '$nameTag님의\n친구요청을 거절하시겠습니까?',
+                      onClickOK: () {
+                        print('ok');
+                      },
+                    ),
+                  );
+                }),
           ),
         ],
       ),

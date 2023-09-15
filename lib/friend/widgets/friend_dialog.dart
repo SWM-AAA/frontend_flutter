@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class FriendDialog extends StatelessWidget {
-  const FriendDialog({super.key});
+  final String text;
+  final void Function() onClickOK;
+
+  const FriendDialog({super.key, required this.text, required this.onClickOK});
 
   @override
   Widget build(BuildContext context) {
@@ -17,15 +20,10 @@ class FriendDialog extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Text(
-                '땡땡김#0001에게',
-                style: TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-              const Text(
-                '친구를 요청하시겠습니까?',
-                style: TextStyle(
+              Text(
+                text,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
                   fontSize: 16,
                 ),
               ),
@@ -33,7 +31,7 @@ class FriendDialog extends StatelessWidget {
                 height: 24,
               ),
               OverflowBar(
-                alignment: MainAxisAlignment.spaceEvenly,
+                alignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   FilledButton(
                       style: const ButtonStyle(
@@ -44,7 +42,7 @@ class FriendDialog extends StatelessWidget {
                       ),
                       child: const Padding(
                         padding:
-                            EdgeInsets.symmetric(vertical: 14, horizontal: 40),
+                            EdgeInsets.symmetric(vertical: 14, horizontal: 32),
                         child: Text(
                           '취소',
                           style: TextStyle(
@@ -60,9 +58,10 @@ class FriendDialog extends StatelessWidget {
                         backgroundColor:
                             MaterialStatePropertyAll(Color(0xff3B71FE)),
                       ),
+                      onPressed: onClickOK,
                       child: const Padding(
                         padding:
-                            EdgeInsets.symmetric(vertical: 14, horizontal: 40),
+                            EdgeInsets.symmetric(vertical: 14, horizontal: 32),
                         child: Text(
                           '확인',
                           style: TextStyle(
@@ -70,8 +69,7 @@ class FriendDialog extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
-                      onPressed: () {}),
+                      )),
                 ],
               )
             ],

@@ -72,6 +72,8 @@ dependencies:
   http: ^1.1.0
   # 외부 브라우저 열기
   url_launcher: ^6.1.12
+  battery_plus: ^4.0.2
+  flutter_svg: ^2.0.7
 
 dev_dependencies:
   flutter_test:
@@ -109,6 +111,7 @@ flutter:
     - assets/images/google/
     - assets/images/apple/
     - assets/images/profile_pictures/
+    - assets/svg/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -147,6 +150,26 @@ flutter:
         - asset: assets/fonts/NotoSansKR-Light.otf
           weight: 300
         - asset: assets/fonts/NotoSansKR-Thin.otf
+          weight: 100
+    - family: Pretendard
+      fonts:
+        - asset: assets/fonts/Pretendard-Black.otf
+          weight: 900
+        - asset: assets/fonts/Pretendard-ExtraBold.otf
+          weight: 800
+        - asset: assets/fonts/Pretendard-Bold.otf
+          weight: 700
+        - asset: assets/fonts/Pretendard-SemiBold.otf
+          weight: 600
+        - asset: assets/fonts/Pretendard-Medium.otf
+          weight: 500
+        - asset: assets/fonts/Pretendard-Regular.otf
+          weight: 400
+        - asset: assets/fonts/Pretendard-Light.otf
+          weight: 300
+        - asset: assets/fonts/Pretendard-ExtraLight.otf
+          weight: 200
+        - asset: assets/fonts/Pretendard-Thin.otf
           weight: 100
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

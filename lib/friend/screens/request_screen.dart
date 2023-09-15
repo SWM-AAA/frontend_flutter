@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
 import 'package:frontend/friend/model/friend_request_model.dart';
+import 'package:frontend/friend/screens/search_screen.dart';
 import 'package:frontend/friend/widgets/add_friend_card.dart';
 
 import '../widgets/friend_request_list.dart';
@@ -14,19 +16,24 @@ class RequestScreen extends StatelessWidget {
       child: SafeArea(
         child: Column(
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                BackButton(
-                  onPressed: () {},
-                ),
-                const Text(
-                  '친구 요청',
-                  style: TextStyle(
-                    fontSize: 30,
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  BackButton(
+                    onPressed: () {},
                   ),
-                ),
-              ],
+                  const Text(
+                    '친구요청',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: FutureBuilder<FriendRequestListModel>(
@@ -35,15 +42,16 @@ class RequestScreen extends StatelessWidget {
                   Widget receivedFriendRequestWidget;
                   if (snapshot.hasData) {
                     print(snapshot.data!.friendRequestList.length);
-                    if (snapshot.data!.friendRequestList.length == 0) {
-                      receivedFriendRequestWidget = SliverToBoxAdapter(
+                    if (snapshot.data!.friendRequestList.isEmpty) {
+                      receivedFriendRequestWidget = const SliverToBoxAdapter(
                         child: Text('친구 요청이 없습니다.'),
                       );
                     } else {
                       receivedFriendRequestWidget = SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
-                            final friendRequestList = snapshot.data!.friendRequestList;
+                            final friendRequestList =
+                                snapshot.data!.friendRequestList;
                             return FriendRequestList(
                               name: friendRequestList[index].nickname,
                               nameTag: friendRequestList[index].userTag,
@@ -58,7 +66,7 @@ class RequestScreen extends StatelessWidget {
                       child: Text("${snapshot.error}"),
                     );
                   } else {
-                    receivedFriendRequestWidget = SliverToBoxAdapter(
+                    receivedFriendRequestWidget = const SliverToBoxAdapter(
                       child: CircularProgressIndicator(),
                     );
                   }
@@ -67,44 +75,61 @@ class RequestScreen extends StatelessWidget {
                       SliverToBoxAdapter(
                         child: Column(children: [
                           AddFreindCard(
-                            icon: Icons.badge_outlined,
-                            name: '네임태그로 친구추가',
-                          ),
+                              icon: SvgPicture.asset(
+                                'assets/svg/nameTag.svg',
+                              ),
+                              name: '네임태그로 친구추가',
+                              iconBackGroundColor: const Color(0xffFFEBE4),
+                              clickHandler: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const FriendSearchScreen()));
+                              }),
                           AddFreindCard(
-                            icon: Icons.call,
+                            icon: SvgPicture.asset(
+                              'assets/svg/call-off.svg',
+                            ),
                             name: '전화번호로 친구추가',
+                            iconBackGroundColor: const Color(0xffDEF5E9),
+                            clickHandler: () {},
                           ),
                           AddFreindCard(
-                            icon: Icons.edgesensor_high,
+                            icon: SvgPicture.asset(
+                              'assets/svg/screen rotate.svg',
+                            ),
+                            iconBackGroundColor: const Color(0xffEBECFF),
                             name: '흔들어서 추가',
+                            clickHandler: () {},
                           ),
                           const SizedBox(
                             height: 10,
                           ),
-                          Container(
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                top: BorderSide(
-                                  color: Colors.black,
-                                  width: 1,
+                          const Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20.0, vertical: 12),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      '친구 요청 목록',
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'Pretendard',
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0),
-                                  child: Text(
-                                    '친구 요청 목록',
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                              ],
-                            ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                            ],
                           ),
                         ]),
                       ),
@@ -122,81 +147,81 @@ class RequestScreen extends StatelessWidget {
 
   Future<FriendRequestListModel> testGetFriendRequestList() async {
     final friendRequestList = [
-      //   FriendRequestModel(
-      //     userId: 1,
-      //     nickname: '김모미',
-      //     userTag: '김모미#0001',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 2,
-      //     nickname: '나모미',
-      //     userTag: '나모미#0002',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 3,
-      //     nickname: '다모미',
-      //     userTag: '다모미#0003',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 4,
-      //     nickname: '라모미',
-      //     userTag: '라모미#0004',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
-      //   FriendRequestModel(
-      //     userId: 5,
-      //     nickname: '마모미',
-      //     userTag: '마모미#0005',
-      //     imageUrl: 'https://picsum.photos/200',
-      //   ),
+      FriendRequestModel(
+        userId: 1,
+        nickname: '김모미',
+        userTag: '김모미#0001',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 2,
+        nickname: '나모미',
+        userTag: '나모미#0002',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 3,
+        nickname: '다모미',
+        userTag: '다모미#0003',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 4,
+        nickname: '라모미',
+        userTag: '라모미#0004',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
+      FriendRequestModel(
+        userId: 5,
+        nickname: '마모미',
+        userTag: '마모미#0005',
+        imageUrl: 'https://picsum.photos/200',
+      ),
     ];
     return FriendRequestListModel(
-      friendRequestList: [],
+      friendRequestList: friendRequestList,
     );
   }
 }
