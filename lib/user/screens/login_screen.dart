@@ -66,14 +66,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             Uri.parse(webAuthResp).queryParameters[ACCESS_TOKEN_KEY];
         final refreshToken =
             Uri.parse(webAuthResp).queryParameters[REFRESH_TOKEN_KEY];
+        final userTag = Uri.parse(webAuthResp).queryParameters[USER_TAG];
+        final userId = Uri.parse(webAuthResp).queryParameters[USER_ID];
 
         final isFirst = Uri.parse(webAuthResp).queryParameters[IS_FIRST];
         logger.i(accessToken);
         logger.i(refreshToken);
         logger.i(isFirst);
+        logger.i(userTag);
+        logger.i(userId);
 
         await secureStorage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
         await secureStorage.write(key: REFRESH_TOKEN_KEY, value: refreshToken);
+        await secureStorage.write(key: USER_TAG, value: userTag);
+        await secureStorage.write(key: USER_ID, value: userId);
 
         if (isFirst == 'true') {
           showRegisterDialog();

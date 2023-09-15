@@ -11,7 +11,7 @@ import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/provider/register_dialog_screen.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
 import 'package:frontend/user/consts/data.dart';
-import 'package:frontend/user/model/access_key_model.dart';
+import 'package:frontend/user/model/user_information_model.dart';
 import 'package:frontend/user/utils/route.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,7 +22,8 @@ class RegisterDialogScreen extends ConsumerStatefulWidget {
   const RegisterDialogScreen({super.key});
 
   @override
-  ConsumerState<RegisterDialogScreen> createState() => _RegisterDialogScreenState();
+  ConsumerState<RegisterDialogScreen> createState() =>
+      _RegisterDialogScreenState();
 }
 
 class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
@@ -43,7 +44,7 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
       }
       File? imageFile = File(pickedImage.path);
 
-      var croppedImageFile;
+      File? croppedImageFile;
       try {
         croppedImageFile = await cropImageRectangle(imageFile: imageFile);
       } catch (e) {
@@ -107,7 +108,8 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
 
   Future<MultipartFile> selectValidImageData() async {
     var postImageData = userProfileImageFile != null
-        ? await MultipartFile.fromFile(userProfileImageFile!.path, filename: userProfileImageFile!.path.split('/').last)
+        ? await MultipartFile.fromFile(userProfileImageFile!.path,
+            filename: userProfileImageFile!.path.split('/').last)
         : await createMultipartFileFromAssets(MY_PROFILE_DEFAULT_IMAGE_PATH);
     return postImageData;
   }
@@ -126,9 +128,11 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
     return data.buffer.asUint8List();
   }
 
-  Future<void> updateAccessKey(Response<dynamic> response, secureStorage) async {
-    var updatedAccessKeyModel = UpdatedAccessKeyModel.fromJson(response.data);
-    await secureStorage.write(key: ACCESS_TOKEN_KEY, value: updatedAccessKeyModel.access_token);
+  Future<void> updateAccessKey(
+      Response<dynamic> response, secureStorage) async {
+    var userInformationModel = UserInformationModel.fromJson(response.data);
+    await secureStorage.write(
+        key: ACCESS_TOKEN_KEY, value: userInformationModel.access_token);
   }
 
   Future<void> saveRegisterData(BuildContext context) async {
@@ -137,14 +141,18 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
     }
     if (userProfileImageFile != null) {
       String userProfileImageFilePath = await saveImageInDeviceDirectory();
-      ref.read(registeredUserInfoProvider.notifier).setUserImage(userProfileImageFilePath);
+      ref
+          .read(registeredUserInfoProvider.notifier)
+          .setUserImage(userProfileImageFilePath);
     }
   }
 
   Future<String> saveImageInDeviceDirectory() async {
     final Directory directory = await getApplicationDocumentsDirectory();
-    final String userProfileImageFilePath = directory.path + '/user_profile_image.png';
-    final File newImage = await userProfileImageFile!.copy(userProfileImageFilePath);
+    final String userProfileImageFilePath =
+        '${directory.path}/user_profile_image.png';
+    final File newImage =
+        await userProfileImageFile!.copy(userProfileImageFilePath);
     return userProfileImageFilePath;
   }
 
@@ -202,7 +210,9 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
                       height: 100,
                       width: 100,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(20)), color: Colors.grey.shade300),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                          color: Colors.grey.shade300),
                       child: Center(
                         child: userProfileImageFile == null
                             ? const Text(
