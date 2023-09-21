@@ -20,19 +20,19 @@ class RequestScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(
                 horizontal: 12,
               ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  BackButton(
-                    onPressed: () {},
+              child: AppBar(
+                leading: const BackButton(),
+                title: const Text(
+                  '친구요청',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w500,
                   ),
-                  const Text(
-                    '친구요청',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
+                ),
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                elevation: 0,
               ),
             ),
             Expanded(
