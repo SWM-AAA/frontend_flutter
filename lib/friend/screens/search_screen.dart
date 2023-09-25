@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
 import 'package:frontend/friend/widgets/friend_search_list.dart';
 
@@ -18,61 +19,86 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
       child: SafeArea(
         child: Column(
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                BackButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                const Text(
-                  '친구',
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+              ),
+              child: AppBar(
+                leading: const BackButton(),
+                title: const Text(
+                  '네임태그로 친구추가',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 18,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-              ],
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                elevation: 0,
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Flexible(
-                    child: TextFormField(
-                      onFieldSubmitted: (text) {
-                        print(text);
-                      },
-                      cursorColor: Colors.black,
-                      decoration: const InputDecoration(
-                        hintText: '닉네임을 입력해주세요.',
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.black,
-                          ),
-                        ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+              ),
+              child: SearchBar(
+                elevation: const MaterialStatePropertyAll(
+                  0,
+                ),
+                backgroundColor: const MaterialStatePropertyAll(
+                  Color(0xfff9f9f9),
+                ),
+                onChanged: (text) {
+                  setState(() {
+                    inputText = text;
+                  });
+                },
+                trailing: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    child: IconButton(
+                      icon: SvgPicture.asset(
+                        'assets/svg/Search.svg',
                       ),
-                      onChanged: (text) {
-                        setState(() {
-                          inputText = text;
-                        });
+                      onPressed: () {
+                        print(inputText);
                       },
                     ),
                   ),
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(25),
+                ],
+                hintText: '친구 닉네임을 입력해주세요.',
+                hintStyle: const MaterialStatePropertyAll(
+                  TextStyle(
+                    color: Color(
+                      0xffb1b5c3,
                     ),
-                    child: IconButton(
-                        onPressed: () {
-                          FocusScope.of(context).unfocus();
-                          print(inputText);
-                        },
-                        icon: const Icon(Icons.search)),
-                  )
+                    fontSize: 16,
+                    fontFamily: 'Pretendard',
+                  ),
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 12,
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    '검색결과',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ],
               ),
             ),

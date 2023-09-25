@@ -25,10 +25,13 @@ class FriendDialog extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 16,
+                  fontFamily: 'Pretendard',
+                  letterSpacing: -0.16,
+                  height: 1.5,
                 ),
               ),
               const SizedBox(
-                height: 24,
+                height: 22,
               ),
               OverflowBar(
                 alignment: MainAxisAlignment.spaceAround,
