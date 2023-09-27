@@ -171,5 +171,9 @@ flutter:
           weight: 200
         - asset: assets/fonts/Pretendard-Thin.otf
           weight: 100
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

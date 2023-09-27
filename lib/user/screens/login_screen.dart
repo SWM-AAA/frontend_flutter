@@ -12,6 +12,7 @@ import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
 import 'package:frontend/permission/screens/position_permission_screen.dart';
+import 'package:frontend/user/components/login_button/apple_login_button.dart';
 import 'package:frontend/user/components/login_button/google_login_button.dart';
 import 'package:frontend/user/components/login_button/kakao_login_button.dart';
 import 'package:frontend/user/components/login_policy_text.dart';
@@ -156,6 +157,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     height: 12,
                   ),
                   GoogleLoginButton(
+                    onPressed: onGoogleLoginButtonClick,
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  AppleLoginButton(
                     onPressed: onGoogleLoginButtonClick,
                   ),
                   const SizedBox(
