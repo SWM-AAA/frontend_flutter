@@ -24,10 +24,12 @@ class BottomNavigationTestScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<BottomNavigationTestScreen> createState() => _BottomNavigationTestScreenState();
+  ConsumerState<BottomNavigationTestScreen> createState() =>
+      _BottomNavigationTestScreenState();
 }
 
-class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTestScreen> {
+class _BottomNavigationTestScreenState
+    extends ConsumerState<BottomNavigationTestScreen> {
   String? userName;
 // image picker 를 할 객체
   final ImagePicker picker = ImagePicker();
@@ -38,9 +40,9 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
   @override
   Widget build(BuildContext context) {
     final userNameWatch = ref.watch(registeredUserInfoProvider).userName;
-    final userProfileImagePathWatch = ref.watch(registeredUserInfoProvider).userProfileImagePath;
+    final userProfileImagePathWatch =
+        ref.watch(registeredUserInfoProvider).userProfileImagePath;
     final dio = ref.watch(dioProvider);
-    final secureStorage = ref.watch(secureStorageProvider);
 
     return SizedBox(
       width: MediaQuery.of(context).size.width,
@@ -48,86 +50,91 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text('테스트 전환 화면: ${widget.testScreenName}'),
-          if (userNameWatch != null)
-            Text(
-              '$userNameWatch님 환영합니다!',
-              style: TextStyle(
-                fontSize: 20,
-              ),
+          Text(
+            '$userNameWatch님 환영합니다!',
+            style: const TextStyle(
+              fontSize: 20,
             ),
-          userProfileImagePathWatch == MY_PROFILE_DEFAULT_IMAGE_PATH
-              ? Image.asset(
-                  userProfileImagePathWatch,
-                  height: 200,
-                  width: 200,
-                  fit: BoxFit.cover,
-                )
-              : Image.file(
-                  File(userProfileImagePathWatch),
-                  height: 200,
-                  width: 200,
-                  fit: BoxFit.cover,
-                ),
+          ),
+          // userProfileImagePathWatch == MY_PROFILE_DEFAULT_IMAGE_PATH
+          //     ? Image.asset(
+          //         userProfileImagePathWatch,
+          //         height: 200,
+          //         width: 200,
+          //         fit: BoxFit.cover,
+          //       )
+          //     : Image.file(
+          //         File(userProfileImagePathWatch),
+          //         height: 200,
+          //         width: 200,
+          //         fit: BoxFit.cover,
+          //       ),
+          Image.network(
+            userProfileImagePathWatch,
+            height: 200,
+            width: 200,
+            fit: BoxFit.cover,
+          ),
           ElevatedButton(
             onPressed: () async {
               logger.i("push get button0");
               await testGetApi(dio);
             },
-            child: Icon(Icons.search),
+            child: const Icon(Icons.search),
           ),
           ElevatedButton(
             onPressed: () async {
               await testPostApi(dio, userNameWatch);
             },
-            child: Icon(Icons.send),
+            child: const Icon(Icons.send),
           ),
           ElevatedButton(
             onPressed: () async {
               await testPostApiMove(dio, userNameWatch);
             },
-            child: Icon(Icons.directions_walk),
+            child: const Icon(Icons.directions_walk),
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: FutureBuilder<FriendLocationAndBattery>(
-                future: testGetApi(dio),
-                builder: (context, AsyncSnapshot<FriendLocationAndBattery> snapshot) {
-                  if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
-                  } else if (snapshot.hasData) {
-                    return ListView.separated(
-                      itemCount: snapshot.data!.friendInfoList.length,
-                      itemBuilder: (_, index) {
-                        final item = snapshot.data!.friendInfoList[index];
-                        // 아이템
-                        return Row(
-                          children: [
-                            Text("${item.userId}"),
-                            SizedBox(width: 10),
-                            Text("${item.liveInfo.latitude}"),
-                            SizedBox(width: 10),
-                            Text("${item.liveInfo.longitude}"),
-                            SizedBox(width: 10),
-                            Text("${item.liveInfo.battery}"),
-                            SizedBox(width: 10),
-                            Text("${item.liveInfo.isCharging}"),
-                          ],
-                        );
-                      },
-                      separatorBuilder: (_, index) {
-                        // 아이템 사이사이
-                        return SizedBox(
-                          height: 10,
-                        );
-                      },
-                    );
-                  }
-                  return CircularProgressIndicator();
-                },
-              ),
-            ),
-          ),
+          // Expanded(
+          //   child: Padding(
+          //     padding: const EdgeInsets.all(20.0),
+          //     child: FutureBuilder<FriendLocationAndBattery>(
+          //       future: testGetApi(dio),
+          //       builder: (context, AsyncSnapshot<FriendLocationAndBattery> snapshot) {
+          //         if (snapshot.hasError) {
+          //           return Text("${snapshot.error}");
+          //         } else if (snapshot.hasData) {
+          //           return ListView.separated(
+          //             itemCount: snapshot.data!.friendInfoList.length,
+          //             itemBuilder: (_, index) {
+          //               final item = snapshot.data!.friendInfoList[index];
+          //               // 아이템
+          //               return Row(
+          //                 children: [
+          //                   Text("${item.userId}"),
+          //                   SizedBox(width: 10),
+          //                   Text("${item.liveInfo.latitude}"),
+          //                   SizedBox(width: 10),
+          //                   Text("${item.liveInfo.longitude}"),
+          //                   SizedBox(width: 10),
+          //                   Text("${item.liveInfo.battery}"),
+          //                   SizedBox(width: 10),
+          //                   Text("${item.liveInfo.isCharging}"),
+          //                 ],
+          //               );
+          //             },
+          //             separatorBuilder: (_, index) {
+          //               // 아이템 사이사이
+          //               return SizedBox(
+          //                 height: 10,
+          //               );
+          //             },
+          //           );
+          //         }
+          //         return CircularProgressIndicator();
+          //       },
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -166,7 +173,7 @@ class _BottomNavigationTestScreenState extends ConsumerState<BottomNavigationTes
             "isCharging": false,
           },
         );
-        await Future.delayed(Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 1));
       }
       logger.i("움직임 끝");
     } catch (e) {

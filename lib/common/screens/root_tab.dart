@@ -4,6 +4,8 @@ import 'package:frontend/common/layouts/default_layout.dart';
 import 'package:frontend/common/provider/register_dialog_screen.dart';
 import 'package:frontend/common/screens/bottom_navigation_test_screen.dart';
 import 'package:frontend/custom_map/screens/map_screen.dart';
+import 'package:frontend/friend/screens/request_screen.dart';
+import 'package:frontend/friend/screens/search_screen.dart';
 
 class RootTab extends StatefulWidget {
   const RootTab({super.key});
@@ -14,7 +16,7 @@ class RootTab extends StatefulWidget {
 
 class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
   late TabController tabController;
-  int bottomNavigationBarCurrentIndex = 1;
+  int bottomNavigationBarCurrentIndex = 0;
 
   @override
   void initState() {
@@ -69,16 +71,20 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.home_outlined,
+              Icons.people,
             ),
-            label: '홈',
+            label: '친구',
           ),
         ],
       ),
-      child: TabBarView(physics: const NeverScrollableScrollPhysics(), controller: tabController, children: [
-        MapScreen(),
-        BottomNavigationTestScreen(testScreenName: '홈 스크린'),
-      ]),
+      child: TabBarView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: tabController,
+        children: const [
+          MapScreen(),
+          RequestScreen(),
+        ],
+      ),
     );
   }
 }

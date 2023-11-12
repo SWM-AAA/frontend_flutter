@@ -22,16 +22,16 @@ class CreateInitMarkerButton extends StatelessWidget {
         int randomNumber = random.nextInt(100); // 0부터 99까지의 랜덤 숫자 생성
         addMarker(await googleUserMarker(
           StaticInfoModel(
-            userId: randomNumber.toString(),
+            userId: randomNumber,
             nickname: '휘서',
             userTag: '휘서#0001',
             imageUrl: MY_PROFILE_IMAGE_PATH,
           ),
-          LatLng(37.540853, 127.078971),
+          const LatLng(37.540853, 127.078971),
           ImageType.Asset,
         ));
       },
-      child: Text("maker"),
+      child: const Text("maker"),
     );
   }
 }
