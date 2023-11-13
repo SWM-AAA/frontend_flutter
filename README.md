@@ -5,10 +5,9 @@
 ![Alt text](https://user-images.githubusercontent.com/26702430/264970574-5998c5fe-ea7c-4b1b-b3cb-d392fd11992b.png)
 
 ## 👨‍👩‍👦‍👦 AAA 팀원소개
-
 <h2><img src="https://github.com/SWM-AAA/frontend_flutter/assets/26702430/ca9b0469-3f90-4baf-a077-f138b8223d6b" alt="Alt text" width="60px" />  팀원 소개</h2>
 
-![swm](https://www.swmaestro.org/static/sw/images/mainRenewal/logo.png)
+![SWM-LOGO](https://github.com/SWM-AAA/.github/assets/26702430/aeb20f61-b01d-4fc8-8300-841fed4f1991)
 
   <table>
   <tr>
@@ -34,7 +33,7 @@
       <td><div><strong>🌟 Flutter 앱 개발</div><div><strong>⭐ User 위치 최적화</div></div><div><strong>🌟 앱 성능 최적화 및 배포</div><div><strong>⭐ Scrum Master</div></td>
   </tr>
   <tr>
-  <td><img src="https://user-images.githubusercontent.com/26702430/264983024-34d1d51e-532c-4a55-9a79-520c912e4d6a.png" alt="Alt text" width="80px" /> </td>
+  <td><img src="https://github.com/SWM-AAA/frontend_flutter/assets/26702430/ec44614f-9eb8-4eba-b3d9-677ca27b49bf.png" alt="Alt text" width="80px" /> </td>
   <td align="center">
       <a href="https://github.com/jihyun-cho-0">
         <sub><b>강환희</b></sub></a><br />
@@ -45,7 +44,8 @@
       <td><div><strong>🌟 Flutter 앱 개발</div></div><div><strong>⭐ 앱 성능 최적화</div><div><strong>🌟 Mixpanel / user product 분석</div></td>
   </tr>
   <tr>
-  <td><img src="https://user-images.githubusercontent.com/26702430/264983024-34d1d51e-532c-4a55-9a79-520c912e4d6a.png" alt="Alt text" width="80px" /> </td>
+  <td>  <img width="80" alt="cys-notion-profile" src="https://github.com/SWM-AAA/.github/assets/26702430/6a0fbf85-bd08-4870-b336-1e3b7570ba79">
+  </td>
   <td align="center">
       <a href="https://github.com/nakevin96">
         <sub><b>최윤석</b></sub></a><br />
@@ -66,15 +66,9 @@
 
 ### 🗺️ 실시간 위치 공유
 
-- redis를 사용하여 사용자 위치실시간 공유
-
 ### 💬 그룹과 실시간 채팅 기능
 
-- websocket을 사용하여 그룹간 사용자 실시간 채팅 기능
-
 ### 📞 N:N 그룹 통화
-
-- Openvidu를 사용하여 미디어서버 구축 - 사용자 N:N 실시간 음성통화 기능
 
 ## ⚒ 기술스택
 
@@ -131,7 +125,7 @@
 
 ## 📋 API 설계
 
-## 🏹 Trouble Shooting
+# 🏹 Trouble Shooting
 
 -
 
