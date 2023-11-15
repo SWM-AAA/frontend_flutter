@@ -17,6 +17,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:frontend/common/consts/data.dart';
 
 class RegisterDialogScreen extends ConsumerStatefulWidget {
   const RegisterDialogScreen({super.key});
@@ -92,6 +93,7 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
       );
       dio.options.contentType = 'multipart/form-data';
       dio.options.maxRedirects.isFinite;
+      dio.options.headers = {};
       final response = await dio.post(
         getApi(API.register),
         data: formData,
@@ -131,33 +133,39 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
   Future<void> updateUserInfo(Response<dynamic> response, secureStorage) async {
     var userInformationModel = UserInformationModel.fromJson(response.data);
     await secureStorage.write(
-        key: ACCESS_TOKEN_KEY, value: userInformationModel.access_token);
+        key: ACCESS_TOKEN_KEY, value: userInformationModel.accessToken);
     await secureStorage.write(
-        key: USER_TAG, value: userInformationModel.user_tag);
+        key: USER_TAG, value: userInformationModel.userTag);
     await secureStorage.write(
-        key: USER_ID, value: userInformationModel.user_id);
+        key: USER_ID, value: userInformationModel.userId.toString());
+    await secureStorage.write(
+        key: PROFILE_URL, value: userInformationModel.imageUrl);
+    ref
+        .read(registeredUserInfoProvider.notifier)
+        .setUserImage(userInformationModel.imageUrl);
   }
 
   Future<void> saveRegisterData(BuildContext context) async {
+    final secureStorage = ref.read(secureStorageProvider);
     if (userRealName != '') {
       ref.read(registeredUserInfoProvider.notifier).setUserName(userRealName);
     }
     if (userProfileImageFile != null) {
-      String userProfileImageFilePath = await saveImageInDeviceDirectory();
+      String userProfileImageFilePath =
+          await secureStorage.read(key: PROFILE_URL) ?? '';
       ref
           .read(registeredUserInfoProvider.notifier)
           .setUserImage(userProfileImageFilePath);
     }
   }
 
-  Future<String> saveImageInDeviceDirectory() async {
-    final Directory directory = await getApplicationDocumentsDirectory();
-    final String userProfileImageFilePath =
-        '${directory.path}/user_profile_image.png';
-    final File newImage =
-        await userProfileImageFile!.copy(userProfileImageFilePath);
-    return userProfileImageFilePath;
-  }
+  // Future<String> saveImageInDeviceDirectory() async {
+  //   final Directory directory = await getApplicationDocumentsDirectory();
+  //   const String userProfileImageFilePath = MY_PROFILE_DEFAULT_IMAGE_PATH;
+  //   final File newImage =
+  //       await userProfileImageFile!.copy(userProfileImageFilePath);
+  //   return userProfileImageFilePath;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -246,8 +254,9 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
                   ),
                 ),
                 onPressed: () async {
+                  if (userRealName == '') return;
                   await postRegisterData(dio, secureStorage);
-                  await saveRegisterData(context);
+                  // await saveRegisterData(context);
 
                   moveToPermissionScreen(context);
                 },
