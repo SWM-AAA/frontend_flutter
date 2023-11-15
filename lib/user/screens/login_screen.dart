@@ -10,6 +10,7 @@ import 'package:frontend/common/consts/api.dart';
 import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
+import 'package:frontend/common/provider/register_dialog_screen.dart';
 import 'package:frontend/common/secure_storage/secure_storage.dart';
 import 'package:frontend/permission/screens/position_permission_screen.dart';
 import 'package:frontend/user/components/login_button/apple_login_button.dart';
@@ -62,25 +63,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           url: uri.toString(),
           callbackUrlScheme: APP_SCHEME,
         );
-
+        print(webAuthResp);
         final accessToken =
             Uri.parse(webAuthResp).queryParameters[ACCESS_TOKEN_KEY];
         final refreshToken =
             Uri.parse(webAuthResp).queryParameters[REFRESH_TOKEN_KEY];
         final userTag = Uri.parse(webAuthResp).queryParameters[USER_TAG];
         final userId = Uri.parse(webAuthResp).queryParameters[USER_ID];
-
+        final userImage = Uri.parse(webAuthResp).queryParameters[PROFILE_URL];
         final isFirst = Uri.parse(webAuthResp).queryParameters[IS_FIRST];
+
+        print(accessToken);
         logger.i(accessToken);
+        print(refreshToken);
         logger.i(refreshToken);
         logger.i(isFirst);
         logger.i(userTag);
         logger.i(userId);
+        logger.i(userImage);
 
         await secureStorage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
         await secureStorage.write(key: REFRESH_TOKEN_KEY, value: refreshToken);
         await secureStorage.write(key: USER_TAG, value: userTag);
         await secureStorage.write(key: USER_ID, value: userId);
+        if (isFirst == 'false') {
+          ref
+              .read(registeredUserInfoProvider.notifier)
+              .setUserImage(userImage!);
+          ref.read(registeredUserInfoProvider.notifier).setUserName(userTag!);
+        }
 
         if (isFirst == 'true') {
           showRegisterDialog();
