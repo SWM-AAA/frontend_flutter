@@ -1,19 +1,24 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:dio/src/response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common/consts/api.dart';
+import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/provider/register_dialog_screen.dart';
+import 'package:frontend/common/secure_storage/secure_storage.dart';
 import 'package:frontend/custom_map/components/test_button/update_markers_button.dart';
 import 'package:frontend/custom_map/const/marker.dart';
 import 'package:frontend/custom_map/model/friend_info_model.dart';
 import 'package:frontend/custom_map/components/custom_google_map.dart';
 import 'package:frontend/custom_map/components/marker/google_user_marker.dart';
 import 'package:frontend/custom_map/model/static_info_model.dart';
+import 'package:frontend/friend/screens/request_screen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:indexed/indexed.dart';
 import 'package:logger/logger.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
@@ -32,7 +37,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   late LocationSettings locationSettings;
   late StreamSubscription<Position> locationStream;
 
-  late GoogleMapController googleMapController;
+  GoogleMapController? googleMapController;
   double cameraZoom = 15;
   final List<Marker> markers = [];
 
@@ -47,16 +52,15 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   @override
   void initState() {
     super.initState();
-
-    // createMyMarker();
+    createMyMarker();
     createFriendMarker();
-
     currentLocation = getCurrentIfPossible();
     locationSettings = const LocationSettings(
       accuracy: LocationAccuracy.high,
       distanceFilter: 1,
     );
-    locationStream = Geolocator.getPositionStream(locationSettings: locationSettings) // 최소 1m 움직였을때 listen
+    locationStream = Geolocator.getPositionStream(
+            locationSettings: locationSettings) // 최소 1m 움직였을때 listen
         .listen((Position position) {
       updateMapCameraPosition(position);
       postMyLocation(position);
@@ -66,23 +70,29 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   @override
   void dispose() {
     locationStream.cancel();
+    googleMapController!.dispose();
     markers.clear();
     super.dispose();
   }
 
   Future<void> createMyMarker() async {
-    String userMarkerId = "user_4"; // TODO: 서버에서 내 정보 받아야함.
-
+    final secureStorage = ref.read(secureStorageProvider);
+    final userMarkerId =
+        await secureStorage.read(key: USER_ID); // TODO: 서버에서 내 정보 받아야함.
+    final userTag = await secureStorage.read(key: USER_TAG);
     final userName = ref.read(registeredUserInfoProvider).userName;
-    final userProfileImagePath = ref.read(registeredUserInfoProvider).userProfileImagePath;
+    final userProfileImagePath =
+        ref.read(registeredUserInfoProvider).userProfileImagePath;
 
     StaticInfoModel markerInfo = StaticInfoModel(
-      userId: userMarkerId,
+      userId: int.parse(userMarkerId!),
       nickname: userName,
-      userTag: userName + '#0001',
+      userTag: userTag!,
       imageUrl: userProfileImagePath,
     );
-    Marker userMarker = await _initRandomLocationMarker(markerInfo, ImageType.Directory);
+    print(userName);
+    Marker userMarker =
+        await _initRandomLocationMarker(markerInfo, ImageType.Directory);
     setState(() {
       markers.add(userMarker);
     });
@@ -90,10 +100,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   Future<void> createFriendMarker() async {
     var response = await getUserInfo();
-    List<StaticInfoModel> markerInfoList = FriendNameAndImage.fromJson(response.data).staticInfoList;
+    List<StaticInfoModel> markerInfoList =
+        FriendNameAndImage.fromJson(response.data).staticInfoList;
 
     for (var userMarkerInfo in markerInfoList) {
-      Marker userMarker = await _initRandomLocationMarker(userMarkerInfo, ImageType.Network);
+      Marker userMarker =
+          await _initRandomLocationMarker(userMarkerInfo, ImageType.Network);
       setState(() {
         markers.add(userMarker);
       });
@@ -102,19 +114,20 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   Future<dynamic> getUserInfo() async {
     final dio = ref.read(dioProvider);
-    var response;
+    Response response;
     try {
       response = await dio.get(getApi(API.getAllUserInfo));
+      return response;
     } catch (e) {
       logger.e(e);
     }
-    return response;
   }
 
-  Future<Marker> _initRandomLocationMarker(StaticInfoModel userMarkerInfo, ImageType imageType) async {
+  Future<Marker> _initRandomLocationMarker(
+      StaticInfoModel userMarkerInfo, ImageType imageType) async {
     // -0.01 ~ 0.01 사이의 랜덤 변위값 생성
-    double move_lat = (Random().nextInt(21) - 10) / 1000;
-    double move_lng = (Random().nextInt(21) - 10) / 1000;
+    double moveLat = (Random().nextInt(21) - 10) / 1000;
+    double moveLng = (Random().nextInt(21) - 10) / 1000;
 
     Marker thisMarker = await googleUserMarker(
       StaticInfoModel(
@@ -123,7 +136,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         userTag: userMarkerInfo.userTag,
         imageUrl: userMarkerInfo.imageUrl,
       ),
-      LatLng(37.540853 + move_lat, 127.078971 + move_lng),
+      LatLng(37.540853 + moveLat, 127.078971 + moveLng),
       imageType,
     );
     return thisMarker;
@@ -150,7 +163,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
     }
   }
 
@@ -166,7 +180,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           "isCharging": false,
         },
       );
-      logger.i("postMyLocation 성공 업로드 ${response.statusCode.toString()} ", position);
+      logger.i(
+          "postMyLocation 성공 업로드 ${response.statusCode.toString()} ", position);
     } catch (e) {
       logger.e(e);
     }
@@ -174,12 +189,18 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   Future<void> updateMapCameraPosition(Position position) async {
     LatLng latLng = LatLng(position.latitude, position.longitude);
-    CameraPosition cameraPosition = CameraPosition(target: latLng, zoom: cameraZoom);
-    googleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    CameraPosition cameraPosition =
+        CameraPosition(target: latLng, zoom: cameraZoom);
+    if (googleMapController != null) {
+      googleMapController!
+          .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    }
     await updateMyMarkerLocation(latLng);
   }
 
   Future<void> updateMyMarkerLocation(LatLng latLng) async {
+    final secureStrage = ref.read(secureStorageProvider);
+    final userId = await secureStrage.read(key: USER_ID);
     LiveInfoModel myLiveInfoModel = LiveInfoModel(
       latitude: latLng.latitude,
       longitude: latLng.longitude,
@@ -187,7 +208,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       isCharging: false,
     );
     UserLiveInfoModel myInfoModel = UserLiveInfoModel(
-      userId: 'user_4', // TODO: 서버에서 내 정보 받아야함.
+      userId: userId!, // TODO: 서버에서 내 정보 받아야함.
       liveInfo: myLiveInfoModel,
     );
     setState(() {
@@ -224,9 +245,36 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Indexer(
       children: [
-        Expanded(
+        Indexed(
+          index: 3,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RequestScreen()));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(20),
+                    backgroundColor: Colors.white, // <-- Button color
+                    foregroundColor: Colors.red, // <-- Splash color
+                  ),
+                  child: const Icon(Icons.people, color: Colors.black),
+                )
+              ],
+            ),
+          ),
+        ),
+
+        SizedBox(
           child: CustomGoogleMap(
             initCameraPosition: initCameraPosition,
             markers: markers,
@@ -242,13 +290,13 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             },
           ),
         ),
-        UpdateMarkersButton(
-          updateMarkerLocation: (friendLiveInfoList) {
-            setState(() {
-              updateFriendLocation(friendLiveInfoList);
-            });
-          },
-        )
+        // UpdateMarkersButton(
+        //   updateMarkerLocation: (friendLiveInfoList) {
+        //     setState(() {
+        //       updateFriendLocation(friendLiveInfoList);
+        //     });
+        //   },
+        // )
       ],
     );
   }

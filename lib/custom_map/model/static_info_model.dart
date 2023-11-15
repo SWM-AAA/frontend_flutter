@@ -6,14 +6,12 @@ class FriendNameAndImage {
 
   factory FriendNameAndImage.fromJson(List<dynamic> json) {
     final List<StaticInfoModel> staticInfoList = [];
-    json.forEach(
-      (element) {
-        final staticInfo = StaticInfoModel.fromJson(
-          element,
-        );
-        staticInfoList.add(staticInfo);
-      },
-    );
+    for (var element in json) {
+      final staticInfo = StaticInfoModel.fromJson(
+        element,
+      );
+      staticInfoList.add(staticInfo);
+    }
     return FriendNameAndImage(
       staticInfoList: staticInfoList,
     );
@@ -21,7 +19,7 @@ class FriendNameAndImage {
 }
 
 class StaticInfoModel {
-  late String userId;
+  late int userId;
   late String nickname;
   late String userTag;
   late String imageUrl;
@@ -34,7 +32,7 @@ class StaticInfoModel {
   });
   factory StaticInfoModel.fromJson(Map<String, dynamic> json) {
     return StaticInfoModel(
-      userId: 'user_' + json['userId'].toString(),
+      userId: json['userId'],
       nickname: json['nickname'],
       userTag: json['userTag'],
       imageUrl: json['imageUrl'],

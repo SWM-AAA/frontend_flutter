@@ -9,8 +9,9 @@ import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/custom_map/const/marker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-Future<BitmapDescriptor> userMarkerIcon(String imagePath, String userName, ImageType imageType) async {
-  final Size size = Size(200, 200);
+Future<BitmapDescriptor> userMarkerIcon(
+    String imagePath, String userName, ImageType imageType) async {
+  const Size size = Size(200, 200);
   final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
 
   final Canvas canvas = Canvas(pictureRecorder);
@@ -23,7 +24,8 @@ Future<BitmapDescriptor> userMarkerIcon(String imagePath, String userName, Image
 
   ui.Image markerImage = await convertCanvasToImage(pictureRecorder, size);
   Uint8List markerImageBytes = await convertImageToBytes(markerImage);
-  BitmapDescriptor bitmapDescriptor = BitmapDescriptor.fromBytes(markerImageBytes);
+  BitmapDescriptor bitmapDescriptor =
+      BitmapDescriptor.fromBytes(markerImageBytes);
   return bitmapDescriptor;
 }
 
@@ -127,46 +129,55 @@ void paintTextUserName(Size size, TextPainter textPainter, Canvas canvas) {
   textPainter.paint(canvas, Offset(horizontalOffset, userNameFontSize / 20));
 }
 
-Future<void> paintProfileImage(Size size, Canvas canvas, String imagePath, ImageType imageType) async {
-  Rect imageRect = Rect.fromLTWH(size.width + imageOffset, imageOffset + userNameHeight, size.width - (imageOffset * 2),
+Future<void> paintProfileImage(
+    Size size, Canvas canvas, String imagePath, ImageType imageType) async {
+  Rect imageRect = Rect.fromLTWH(
+      size.width + imageOffset,
+      imageOffset + userNameHeight,
+      size.width - (imageOffset * 2),
       size.height - (imageOffset * 2));
 
   canvas.clipPath(Path()..addOval(imageRect));
 
   ui.Image profileImage = await getImageFromPath(imagePath, imageType);
-  paintImage(canvas: canvas, image: profileImage, rect: imageRect, fit: BoxFit.fitWidth);
+  paintImage(
+    canvas: canvas,
+    image: profileImage,
+    rect: imageRect,
+    fit: BoxFit.fitWidth,
+  );
 }
 
 Future<ui.Image> getImageFromPath(String imagePath, ImageType imageType) async {
   late Uint8List uint8listData;
-
   try {
-    switch (imageType) {
-      case ImageType.Directory:
-        File imageFile = File(imagePath);
-        if (await imageFile.exists()) {
-          // The file exists, proceed with loading the image
-          uint8listData = imageFile.readAsBytesSync();
-          break;
-        }
-      case ImageType.Asset:
-        final ByteData byteData = await rootBundle.load(imagePath);
-        uint8listData = byteData.buffer.asUint8List();
-        break;
-      case ImageType.Network:
-        final http.Response response = await http.get(Uri.parse(imagePath));
-        if (response.statusCode == 200) {
-          uint8listData = response.bodyBytes;
-          break;
-        }
-      default:
-        final ByteData byteData = await rootBundle.load(MY_PROFILE_DEFAULT_IMAGE_PATH);
-        uint8listData = byteData.buffer.asUint8List();
-        break;
-    }
-
+    // switch (imageType) {
+    //   case ImageType.Directory:
+    //     File imageFile = File(imagePath);
+    //     if (await imageFile.exists()) {
+    //       // The file exists, proceed with loading the image
+    //       uint8listData = imageFile.readAsBytesSync();
+    //       break;
+    //     }
+    //   case ImageType.Asset:
+    //     final ByteData byteData = await rootBundle.load(imagePath);
+    //     uint8listData = byteData.buffer.asUint8List();
+    //     break;
+    //   case ImageType.Network:
+    //     final http.Response response = await http.get(Uri.parse(imagePath));
+    //     if (response.statusCode == 200) {
+    //       uint8listData = response.bodyBytes;
+    //       break;
+    //     }
+    //   default:
+    //     final ByteData byteData =
+    //         await rootBundle.load(MY_PROFILE_DEFAULT_IMAGE_PATH);
+    //     uint8listData = byteData.buffer.asUint8List();
+    //     break;
+    // }
+    final http.Response response = await http.get(Uri.parse(imagePath));
+    uint8listData = response.bodyBytes;
     final Completer<ui.Image> completer = Completer();
-
     // ui.decodeImageFromList(byteData.buffer.asUint8List(), (ui.Image img) {
     ui.decodeImageFromList(uint8listData, (ui.Image img) {
       return completer.complete(img);
@@ -179,14 +190,15 @@ Future<ui.Image> getImageFromPath(String imagePath, ImageType imageType) async {
 }
 
 Future<Uint8List> convertImageToBytes(ui.Image markerAsImage) async {
-  final ByteData? byteData = await markerAsImage.toByteData(format: ImageByteFormat.png);
+  final ByteData? byteData =
+      await markerAsImage.toByteData(format: ImageByteFormat.png);
   final Uint8List markerImageBytes = byteData!.buffer.asUint8List();
   return markerImageBytes;
 }
 
-Future<ui.Image> convertCanvasToImage(PictureRecorder pictureRecorder, Size size) async {
-  final ui.Image markerImage = await pictureRecorder
-      .endRecording()
-      .toImage(size.width.toInt() * 3, size.height.toInt() + userNameHeight.toInt());
+Future<ui.Image> convertCanvasToImage(
+    PictureRecorder pictureRecorder, Size size) async {
+  final ui.Image markerImage = await pictureRecorder.endRecording().toImage(
+      size.width.toInt() * 3, size.height.toInt() + userNameHeight.toInt());
   return markerImage;
 }
