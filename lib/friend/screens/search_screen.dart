@@ -1,20 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
+import 'package:frontend/friend/model/friend_search_result_model.dart';
+import 'package:frontend/friend/model/post_search_model.dart';
+import 'package:frontend/friend/repository/friend_repository.dart';
 import 'package:frontend/friend/widgets/friend_search_list.dart';
 
-class FriendSearchScreen extends StatefulWidget {
+class FriendSearchScreen extends ConsumerStatefulWidget {
   const FriendSearchScreen({super.key});
 
   @override
-  State<FriendSearchScreen> createState() => _FriendSearchScreenState();
+  ConsumerState<FriendSearchScreen> createState() => _FriendSearchScreenState();
 }
 
-class _FriendSearchScreenState extends State<FriendSearchScreen> {
+class _FriendSearchScreenState extends ConsumerState<FriendSearchScreen> {
   String inputText = '';
+  Future<FriendSearchResultModel>? result;
+  bool isFirst = true;
+
+  refetch() {
+    setState(() {
+      result = ref
+          .read(friendRepositoryProvider)
+          .searchUser(PostSearchModel(userTag: inputText));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final repository = ref.watch(friendRepositoryProvider);
+
     return DefaultLayout(
       child: SafeArea(
         child: Column(
@@ -67,7 +83,19 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                         'assets/svg/Search.svg',
                       ),
                       onPressed: () {
-                        print(inputText);
+                        setState(() {
+                          isFirst = false;
+                        });
+                        Future<FriendSearchResultModel> response;
+                        try {
+                          response = repository
+                              .searchUser(PostSearchModel(userTag: inputText));
+                        } catch (error) {
+                          return;
+                        }
+                        setState(() {
+                          result = response;
+                        });
                       },
                     ),
                   ),
@@ -103,71 +131,51 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
               ),
             ),
             Expanded(
-              child: ListView(
-                children: const [
-                  FreindSearchList(
-                    name: '김모미',
-                    nameTag: '김모미#0001',
-                    isFriendRequestSent: true,
-                  ),
-                  FreindSearchList(
-                    name: '김모미',
-                    nameTag: '김모미#0001',
-                    isFriendRequestSent: false,
-                  ),
-                  FreindSearchList(
-                    name: '김모미',
-                    nameTag: '김모미#0001',
-                    isFriendRequestSent: true,
-                  ),
-                  FreindSearchList(
-                    name: '김모미',
-                    nameTag: '김모미#0001',
-                    isFriendRequestSent: true,
-                  ),
-                  FreindSearchList(
-                    name: '김모미',
-                    nameTag: '김모미#0001',
-                    isFriendRequestSent: true,
-                  ),
-                  FreindSearchList(
-                    name: '김모미',
-                    nameTag: '김모미#0001',
-                    isFriendRequestSent: true,
-                  ),
-                  FreindSearchList(
-                    name: '김모미',
-                    nameTag: '김모미#0001',
-                    isFriendRequestSent: true,
-                  ),
-                  FreindSearchList(
-                    name: '김모미',
-                    nameTag: '김모미#0001',
-                    isFriendRequestSent: true,
-                  ),
-                  FreindSearchList(
-                    name: '김모미',
-                    nameTag: '김모미#0001',
-                    isFriendRequestSent: true,
-                  ),
-                  FreindSearchList(
-                    name: '김모미',
-                    nameTag: '김모미#0001',
-                    isFriendRequestSent: true,
-                  ),
-                  FreindSearchList(
-                    name: '김모미',
-                    nameTag: '김모미#0001',
-                    isFriendRequestSent: true,
-                  ),
-                  FreindSearchList(
-                    name: '김모미',
-                    nameTag: '김모미#0001',
-                    isFriendRequestSent: true,
-                  ),
-                ],
-              ),
+              child: FutureBuilder(
+                  future: result,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Column(
+                        children: [
+                          FriendSearchList(
+                            id: snapshot.data!.userId,
+                            name: snapshot.data!.nickname,
+                            nameTag: snapshot.data!.userTag,
+                            imageUrl: snapshot.data!.imageUrl,
+                            isFriendRequestSent: snapshot.data!.relationship,
+                            refetch: refetch,
+                          ),
+                        ],
+                      );
+                    } else {
+                      if (isFirst) {
+                        return const SizedBox();
+                      } else {
+                        return const Center(child: Text('검색 결과가 없습니다.'));
+                      }
+                    }
+                  }),
             )
+            // Expanded(
+            //   child: result == null
+            //       ? isFirst == true
+            //           ? const SizedBox()
+            //           : const Center(
+            //               child: Text('검색 결과가 없습니다.'),
+            //             )
+            //       : Column(
+            //           children: [
+            //             FriendSearchList(
+            //               id: result!.userId,
+            //               name: result!.nickname,
+            //               nameTag: result!.userTag,
+            //               imageUrl: result!.imageUrl,
+            //               isFriendRequestSent: result!.relationship,
+            //               refetch: refetch,
+            //             ),
+            //           ],
+            //         ),
+            // )
           ],
         ),
       ),

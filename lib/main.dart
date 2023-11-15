@@ -1,7 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/battery_test/battery_test.dart';
 import 'package:frontend/common/screens/splash_screen.dart';
+import 'package:frontend/custom_map/components/custom_google_map.dart';
+import 'package:frontend/custom_map/screens/map_screen.dart';
+import 'package:frontend/friend/screens/request_screen.dart';
+import 'package:frontend/map_sample.dart';
 import 'package:image_picker_android/image_picker_android.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
@@ -14,10 +21,12 @@ void main() async {
   await dotenv.load(fileName: '.env'); // .env 파일을 읽어서 환경변수로 등록
 
   // android photo picker를 사용하기 위한 설정
-  final ImagePickerPlatform imagePickerImplementation = ImagePickerPlatform.instance;
+  final ImagePickerPlatform imagePickerImplementation =
+      ImagePickerPlatform.instance;
   if (imagePickerImplementation is ImagePickerAndroid) {
     imagePickerImplementation.useAndroidPhotoPicker = true;
   }
+
   runApp(const ProviderScope(child: _App()));
 }
 

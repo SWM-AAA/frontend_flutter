@@ -9,15 +9,17 @@ part of 'user_information_model.dart';
 UserInformationModel _$UserInformationModelFromJson(
         Map<String, dynamic> json) =>
     UserInformationModel(
-      access_token: json['access_token'] as String,
-      user_tag: json['user_tag'] as String,
-      user_id: json['user_id'] as int,
+      accessToken: json['accessToken'] as String,
+      userTag: json['userTag'] as String,
+      userId: json['userId'] as int,
+      imageUrl: json['imageUrl'] as String,
     );
 
 Map<String, dynamic> _$UserInformationModelToJson(
         UserInformationModel instance) =>
     <String, dynamic>{
-      'access_token': instance.access_token,
-      'user_tag': instance.user_tag,
-      'user_id': instance.user_id,
+      'accessToken': instance.accessToken,
+      'userTag': instance.userTag,
+      'userId': instance.userId,
+      'imageUrl': instance.imageUrl,
     };

@@ -7,7 +7,7 @@ class PositionPermissionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultLayout(
+    return const DefaultLayout(
       backgroundDecorationImage: DecorationImage(
         fit: BoxFit.cover,
         image: AssetImage(

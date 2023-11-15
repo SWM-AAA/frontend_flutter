@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:frontend/friend/model/post_friend_request_model.dart';
+import 'package:frontend/friend/repository/friend_repository.dart';
 import 'package:frontend/friend/widgets/friend_dialog.dart';
 
-class FreindSearchList extends StatelessWidget {
-  final String name, nameTag;
+class FriendSearchList extends ConsumerWidget {
+  final int id;
+  final String name, nameTag, imageUrl;
   final bool isFriendRequestSent;
-  const FreindSearchList(
-      {super.key,
-      required this.name,
-      required this.nameTag,
-      required this.isFriendRequestSent});
+  final Function refetch;
+
+  const FriendSearchList({
+    super.key,
+    required this.id,
+    required this.name,
+    required this.nameTag,
+    required this.isFriendRequestSent,
+    required this.imageUrl,
+    required this.refetch,
+  });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final repository = ref.watch(friendRepositoryProvider);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
       child: Row(
@@ -24,6 +36,8 @@ class FreindSearchList extends StatelessWidget {
               color: Colors.black26,
               borderRadius: BorderRadius.circular(23),
             ),
+            clipBehavior: Clip.hardEdge,
+            child: Image.network(imageUrl),
           ),
           const SizedBox(
             width: 20,
@@ -58,10 +72,15 @@ class FreindSearchList extends StatelessWidget {
                 context: context,
                 builder: (_) => FriendDialog(
                   text: isFriendRequestSent
-                      ? '$nameTag에게\n 요청을 취소하겠습니까?'
+                      ? '$nameTag에게\n요청을 이미 전송하였습니다.'
                       : '$nameTag에게\n친구를 요청하시겠습니까?',
-                  onClickOK: () {
-                    print('ok');
+                  onClickOK: () async {
+                    if (!isFriendRequestSent) {
+                      await repository.postFriendRequest(
+                          PostFriendRequestModel(userId: id));
+                      refetch();
+                    }
+                    Navigator.pop(context);
                   },
                 ),
               );
@@ -79,11 +98,11 @@ class FreindSearchList extends StatelessWidget {
                         width: 1,
                       ),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text(
+                        Text(
                           '요청중',
                           style: TextStyle(
                             color: Color(0xff2d73ff),
@@ -93,12 +112,12 @@ class FreindSearchList extends StatelessWidget {
                             letterSpacing: -0.28,
                           ),
                         ),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        SvgPicture.asset(
-                          'assets/svg/blueClose.svg',
-                        ),
+                        // const SizedBox(
+                        //   width: 4,
+                        // ),
+                        // SvgPicture.asset(
+                        //   'assets/svg/blueClose.svg',
+                        // ),
                       ],
                     ))
                 : Container(

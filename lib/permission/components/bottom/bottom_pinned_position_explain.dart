@@ -49,7 +49,7 @@ class BottomPinnedPositionExplain extends ConsumerWidget {
         showDialog(
           context: context,
           builder: (context) {
-            return PositionPermissionDialog();
+            return const PositionPermissionDialog();
           },
         );
       } else {
@@ -71,7 +71,7 @@ class BottomPinnedPositionExplain extends ConsumerWidget {
         children: [
           Text(
             '$userName님,\n위치를 알려주세요',
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 36,
               fontWeight: FontWeight.w700,
@@ -95,7 +95,7 @@ class BottomPinnedPositionExplain extends ConsumerWidget {
               showDialog(
                 context: context,
                 builder: (context) {
-                  return PositionExplainDialog();
+                  return const PositionExplainDialog();
                 },
               );
             },

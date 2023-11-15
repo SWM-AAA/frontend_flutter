@@ -3,7 +3,8 @@ import 'package:frontend/common/consts/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final registeredUserInfoProvider =
-    StateNotifierProvider<RegisteredUserInfoNotifier, RegisteredUserInfoModel>((ref) => RegisteredUserInfoNotifier());
+    StateNotifierProvider<RegisteredUserInfoNotifier, RegisteredUserInfoModel>(
+        (ref) => RegisteredUserInfoNotifier());
 
 class RegisteredUserInfoModel {
   String userName;
@@ -28,21 +29,26 @@ class RegisteredUserInfoModel {
   }
 }
 
-class RegisteredUserInfoNotifier extends StateNotifier<RegisteredUserInfoModel> {
+class RegisteredUserInfoNotifier
+    extends StateNotifier<RegisteredUserInfoModel> {
   RegisteredUserInfoNotifier()
       : super(RegisteredUserInfoModel(
           userName: 'No name',
           userProfileImagePath: MY_PROFILE_DEFAULT_IMAGE_PATH,
         )) {
-    _loadRegisteredUserInfo();
+    // _loadRegisteredUserInfo();
   }
 
   // Load user profile from storage
   Future<void> _loadRegisteredUserInfo() async {
     final prefs = await SharedPreferences.getInstance();
     final userName = prefs.getString('userName') ?? 'No name';
-    final userProfileImagePath = prefs.getString('userProfileImagePath') ?? MY_PROFILE_DEFAULT_IMAGE_PATH;
-    state = RegisteredUserInfoModel(userName: userName, userProfileImagePath: userProfileImagePath);
+    final userProfileImagePath = prefs.getString('userProfileImagePath') ??
+        MY_PROFILE_DEFAULT_IMAGE_PATH;
+    state = RegisteredUserInfoModel(
+      userName: userName,
+      userProfileImagePath: userProfileImagePath,
+    );
   }
 
   Future<void> _saveUserProfileToStorage() async {
@@ -52,12 +58,17 @@ class RegisteredUserInfoNotifier extends StateNotifier<RegisteredUserInfoModel> 
   }
 
   void setUserName(String name) {
-    state = RegisteredUserInfoModel(userName: name, userProfileImagePath: state.userProfileImagePath);
+    state = RegisteredUserInfoModel(
+        userName: name, userProfileImagePath: state.userProfileImagePath);
     _saveUserProfileToStorage();
   }
 
   void setUserImage(String imagePath) {
-    state = RegisteredUserInfoModel(userName: state.userName, userProfileImagePath: imagePath);
+    state = RegisteredUserInfoModel(
+      userName: state.userName,
+      userProfileImagePath: imagePath,
+    );
+    print(imagePath);
     _saveUserProfileToStorage();
   }
 }
