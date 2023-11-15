@@ -1,19 +1,21 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'post_friend_request_model.dart';
+part of 'post_friend_response_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-PostFriendRequestModel _$PostFriendRequestModelFromJson(
+PostFriendResponseModel _$PostFriendResponseModelFromJson(
         Map<String, dynamic> json) =>
-    PostFriendRequestModel(
+    PostFriendResponseModel(
       userId: json['userId'] as int,
+      isAccept: json['isAccept'] as bool,
     );
 
-Map<String, dynamic> _$PostFriendRequestModelToJson(
-        PostFriendRequestModel instance) =>
+Map<String, dynamic> _$PostFriendResponseModelToJson(
+        PostFriendResponseModel instance) =>
     <String, dynamic>{
       'userId': instance.userId,
+      'isAccept': instance.isAccept,
     };

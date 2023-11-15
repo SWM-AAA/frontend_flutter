@@ -27,15 +27,16 @@ class _LoginPolicyTextState extends State<LoginPolicyText> {
           textAlign: TextAlign.center,
           text: TextSpan(
               children: [
-                TextSpan(
+                const TextSpan(
                   text: 'By continuing you agree Zeppy’s Terms of ',
                   style: TextStyle(
                     color: Color(0xFF5C5F68),
                   ),
                 ),
                 TextSpan(
-                  text: 'Services & Privacy & Position Policy', // Tappable words
-                  style: TextStyle(
+                  text:
+                      'Services & Privacy & Position Policy', // Tappable words
+                  style: const TextStyle(
                     color: Colors.blue,
                     decoration: TextDecoration.underline,
                   ),
@@ -45,7 +46,7 @@ class _LoginPolicyTextState extends State<LoginPolicyText> {
                     },
                 ),
               ],
-              style: TextStyle(
+              style: const TextStyle(
                 color: Color(0xFF5C5F68),
                 fontSize: 12,
                 fontWeight: FontWeight.w500,

@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:frontend/friend/model/post_friend_response_model.dart';
+import 'package:frontend/friend/repository/friend_repository.dart';
 import 'package:frontend/friend/widgets/friend_dialog.dart';
 
-class FriendRequestList extends StatelessWidget {
-  final String name, nameTag;
-  const FriendRequestList(
-      {super.key, required this.name, required this.nameTag});
+class FriendRequestList extends ConsumerWidget {
+  final int id;
+  final String name, nameTag, imageUrl;
+  final Function refetch;
+
+  const FriendRequestList({
+    super.key,
+    required this.name,
+    required this.nameTag,
+    required this.id,
+    required this.imageUrl,
+    required this.refetch,
+  });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final repository = ref.watch(friendRepositoryProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
       child: Row(
@@ -78,8 +91,14 @@ class FriendRequestList extends StatelessWidget {
                     context: context,
                     builder: (_) => FriendDialog(
                       text: '$nameTag님의\n친구요청을 수락하시겠습니까?',
-                      onClickOK: () {
-                        print('ok');
+                      onClickOK: () async {
+                        await repository
+                            .postFriendResponse(PostFriendResponseModel(
+                          userId: id,
+                          isAccept: true,
+                        ));
+                        Navigator.pop(context);
+                        refetch();
                       },
                     ),
                   );
@@ -105,8 +124,14 @@ class FriendRequestList extends StatelessWidget {
                     context: context,
                     builder: (_) => FriendDialog(
                       text: '$nameTag님의\n친구요청을 거절하시겠습니까?',
-                      onClickOK: () {
-                        print('ok');
+                      onClickOK: () async {
+                        await repository
+                            .postFriendResponse(PostFriendResponseModel(
+                          userId: id,
+                          isAccept: false,
+                        ));
+                        Navigator.pop(context);
+                        refetch();
                       },
                     ),
                   );
