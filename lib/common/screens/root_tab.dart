@@ -4,6 +4,7 @@ import 'package:frontend/common/layouts/default_layout.dart';
 import 'package:frontend/common/provider/register_dialog_screen.dart';
 import 'package:frontend/common/screens/bottom_navigation_test_screen.dart';
 import 'package:frontend/custom_map/screens/map_screen.dart';
+import 'package:frontend/friend/screens/friend_screen.dart';
 import 'package:frontend/friend/screens/request_screen.dart';
 import 'package:frontend/friend/screens/search_screen.dart';
 
@@ -47,7 +48,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      title: 'Zeppy',
+      // title: 'Zeppy',
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
@@ -82,7 +83,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         controller: tabController,
         children: const [
           MapScreen(),
-          RequestScreen(),
+          FriendScreen(),
         ],
       ),
     );

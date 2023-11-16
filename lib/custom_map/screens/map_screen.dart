@@ -245,59 +245,28 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Indexer(
-      children: [
-        Indexed(
-          index: 3,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const RequestScreen()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: const CircleBorder(),
-                    padding: const EdgeInsets.all(20),
-                    backgroundColor: Colors.white, // <-- Button color
-                    foregroundColor: Colors.red, // <-- Splash color
-                  ),
-                  child: const Icon(Icons.people, color: Colors.black),
-                )
-              ],
-            ),
-          ),
-        ),
-
-        SizedBox(
-          child: CustomGoogleMap(
-            initCameraPosition: initCameraPosition,
-            markers: markers,
-            updateControllerOnMapCreated: (GoogleMapController controller) {
-              setState(() {
-                googleMapController = controller;
-              });
-            },
-            onCameraMove: (CameraPosition cameraPosition) {
-              setState(() {
-                cameraZoom = cameraPosition.zoom;
-              });
-            },
-          ),
-        ),
-        // UpdateMarkersButton(
-        //   updateMarkerLocation: (friendLiveInfoList) {
-        //     setState(() {
-        //       updateFriendLocation(friendLiveInfoList);
-        //     });
-        //   },
-        // )
-      ],
+    return SizedBox(
+      child: CustomGoogleMap(
+        initCameraPosition: initCameraPosition,
+        markers: markers,
+        updateControllerOnMapCreated: (GoogleMapController controller) {
+          setState(() {
+            googleMapController = controller;
+          });
+        },
+        onCameraMove: (CameraPosition cameraPosition) {
+          setState(() {
+            cameraZoom = cameraPosition.zoom;
+          });
+        },
+      ),
     );
+    // UpdateMarkersButton(
+    //   updateMarkerLocation: (friendLiveInfoList) {
+    //     setState(() {
+    //       updateFriendLocation(friendLiveInfoList);
+    //     });
+    //   },
+    // )
   }
 }
