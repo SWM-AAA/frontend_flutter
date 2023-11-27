@@ -8,7 +8,7 @@ import 'package:frontend/friend/widgets/friend_dialog.dart';
 class FriendSearchList extends ConsumerWidget {
   final int id;
   final String name, nameTag, imageUrl;
-  final bool isFriendRequestSent;
+  final bool isFriendRequestSent, isFriend;
   final Function refetch;
 
   const FriendSearchList({
@@ -18,6 +18,7 @@ class FriendSearchList extends ConsumerWidget {
     required this.nameTag,
     required this.isFriendRequestSent,
     required this.imageUrl,
+    required this.isFriend,
     required this.refetch,
   });
 
@@ -68,6 +69,7 @@ class FriendSearchList extends ConsumerWidget {
           ),
           GestureDetector(
             onTap: () {
+              if (isFriend) return;
               showDialog(
                 context: context,
                 builder: (_) => FriendDialog(
@@ -98,13 +100,13 @@ class FriendSearchList extends ConsumerWidget {
                         width: 1,
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          '요청중',
-                          style: TextStyle(
+                          isFriend ? '친구' : '요청중',
+                          style: const TextStyle(
                             color: Color(0xff2d73ff),
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -119,7 +121,8 @@ class FriendSearchList extends ConsumerWidget {
                         //   'assets/svg/blueClose.svg',
                         // ),
                       ],
-                    ))
+                    ),
+                  )
                 : Container(
                     alignment: AlignmentDirectional.center,
                     width: 81,

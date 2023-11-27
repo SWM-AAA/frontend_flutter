@@ -91,6 +91,7 @@ class _RegisterDialogScreenState extends ConsumerState<RegisterDialogScreen> {
           'nickname': postName,
         },
       );
+      ref.read(registeredUserInfoProvider.notifier).setUserName(userRealName);
       dio.options.contentType = 'multipart/form-data';
       dio.options.maxRedirects.isFinite;
       dio.options.headers = {};

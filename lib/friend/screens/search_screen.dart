@@ -1,6 +1,11 @@
+import 'dart:developer';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:frontend/common/consts/api.dart';
+import 'package:frontend/common/dio/dio.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
 import 'package:frontend/friend/model/friend_search_result_model.dart';
 import 'package:frontend/friend/model/post_search_model.dart';
@@ -20,16 +25,35 @@ class _FriendSearchScreenState extends ConsumerState<FriendSearchScreen> {
   bool isFirst = true;
 
   refetch() {
-    setState(() {
-      result = ref
+    Future<FriendSearchResultModel> response;
+    try {
+      response = ref
           .read(friendRepositoryProvider)
           .searchUser(PostSearchModel(userTag: inputText));
+    } catch (e) {
+      return;
+    }
+    setState(() {
+      result = response;
     });
+  }
+
+  Future<FriendSearchResultModel> searchUser(Dio dio) async {
+    try {
+      var response = await dio.post(
+        '$BASE_URL/api/v1/users/search/usertag',
+        data: {'userTag': inputText},
+      );
+      return FriendSearchResultModel.fromJson(response.data);
+    } catch (error) {
+      rethrow;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final repository = ref.watch(friendRepositoryProvider);
+    final dio = ref.watch(dioProvider);
 
     return DefaultLayout(
       child: SafeArea(
@@ -143,10 +167,13 @@ class _FriendSearchScreenState extends ConsumerState<FriendSearchScreen> {
                             nameTag: snapshot.data!.userTag,
                             imageUrl: snapshot.data!.imageUrl,
                             isFriendRequestSent: snapshot.data!.relationship,
+                            isFriend: snapshot.data!.friend,
                             refetch: refetch,
                           ),
                         ],
                       );
+                    } else if (snapshot.hasError) {
+                      return const Center(child: Text('검색 결과가 없습니다.'));
                     } else {
                       if (isFirst) {
                         return const SizedBox();

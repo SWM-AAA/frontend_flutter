@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend/friend/model/post_friend_response_model.dart';
+import 'package:frontend/friend/provider/friend_list_provider.dart';
 import 'package:frontend/friend/repository/friend_repository.dart';
 import 'package:frontend/friend/widgets/friend_dialog.dart';
 
@@ -33,6 +34,8 @@ class FriendRequestList extends ConsumerWidget {
               color: Colors.black26,
               borderRadius: BorderRadius.circular(23),
             ),
+            clipBehavior: Clip.hardEdge,
+            child: Image.network(imageUrl),
           ),
           const SizedBox(
             width: 12,
@@ -92,13 +95,16 @@ class FriendRequestList extends ConsumerWidget {
                     builder: (_) => FriendDialog(
                       text: '$nameTag님의\n친구요청을 수락하시겠습니까?',
                       onClickOK: () async {
+                        Navigator.pop(context);
                         await repository
                             .postFriendResponse(PostFriendResponseModel(
                           userId: id,
-                          isAccept: true,
+                          accept: true,
                         ));
-                        Navigator.pop(context);
                         refetch();
+                        await ref
+                            .read(friendListProvider.notifier)
+                            .getFriendList();
                       },
                     ),
                   );
@@ -128,10 +134,10 @@ class FriendRequestList extends ConsumerWidget {
                         await repository
                             .postFriendResponse(PostFriendResponseModel(
                           userId: id,
-                          isAccept: false,
+                          accept: false,
                         ));
-                        Navigator.pop(context);
                         refetch();
+                        Navigator.pop(context);
                       },
                     ),
                   );
