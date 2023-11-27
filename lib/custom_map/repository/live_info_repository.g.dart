@@ -32,7 +32,7 @@ class _LiveInfoRepository implements LiveInfoRepository {
     )
             .compose(
               _dio.options,
-              '/api/v1/users/all-user-location-and-battery',
+              '/api/v1/users/friend-location-and-battery',
               queryParameters: queryParameters,
               data: _data,
             )

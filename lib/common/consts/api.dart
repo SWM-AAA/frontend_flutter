@@ -23,6 +23,7 @@ Map<API, String> apiMap = {
   API.getAllUserInfo: '/api/test/users/all-user-information',
 };
 String BASE_URL = dotenv.env['AAA_PUBLIC_API_BASE'].toString();
+// String BASE_URL = 'https://d2e7-125-177-98-67.ngrok-free.app';
 
 String getApi(API apiType) {
   String api = BASE_URL;
