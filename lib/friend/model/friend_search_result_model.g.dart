@@ -14,6 +14,7 @@ FriendSearchResultModel _$FriendSearchResultModelFromJson(
       userTag: json['userTag'] as String,
       imageUrl: json['imageUrl'] as String,
       relationship: json['relationship'] as bool,
+      friend: json['friend'] as bool,
     );
 
 Map<String, dynamic> _$FriendSearchResultModelToJson(
@@ -24,4 +25,5 @@ Map<String, dynamic> _$FriendSearchResultModelToJson(
       'userTag': instance.userTag,
       'imageUrl': instance.imageUrl,
       'relationship': instance.relationship,
+      'friend': instance.friend,
     };

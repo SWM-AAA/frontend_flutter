@@ -9,13 +9,14 @@ class FriendSearchResultModel {
   late String userTag;
   late String imageUrl;
   late bool relationship;
-
+  late bool friend;
   FriendSearchResultModel({
     required this.userId,
     required this.nickname,
     required this.userTag,
     required this.imageUrl,
     required this.relationship,
+    required this.friend,
   });
   factory FriendSearchResultModel.fromJson(Map<String, dynamic> json) =>
       _$FriendSearchResultModelFromJson(json);

@@ -10,12 +10,12 @@ PostFriendResponseModel _$PostFriendResponseModelFromJson(
         Map<String, dynamic> json) =>
     PostFriendResponseModel(
       userId: json['userId'] as int,
-      isAccept: json['isAccept'] as bool,
+      accept: json['accept'] as bool,
     );
 
 Map<String, dynamic> _$PostFriendResponseModelToJson(
         PostFriendResponseModel instance) =>
     <String, dynamic>{
       'userId': instance.userId,
-      'isAccept': instance.isAccept,
+      'accept': instance.accept,
     };
