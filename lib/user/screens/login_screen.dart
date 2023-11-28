@@ -72,10 +72,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         final userId = Uri.parse(webAuthResp).queryParameters[USER_ID];
         final userImage = Uri.parse(webAuthResp).queryParameters[PROFILE_URL];
         final isFirst = Uri.parse(webAuthResp).queryParameters[IS_FIRST];
+        final nickName = Uri.parse(webAuthResp).queryParameters['nickName'];
 
-        print(accessToken);
         logger.i(accessToken);
-        print(refreshToken);
         logger.i(refreshToken);
         logger.i(isFirst);
         logger.i(userTag);
@@ -90,7 +89,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ref
               .read(registeredUserInfoProvider.notifier)
               .setUserImage(userImage!);
-          ref.read(registeredUserInfoProvider.notifier).setUserName(userTag!);
+          ref.read(registeredUserInfoProvider.notifier).setUserName(nickName!);
         }
 
         if (isFirst == 'true') {

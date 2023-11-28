@@ -35,7 +35,7 @@ class CustomInterceptor extends Interceptor {
     print('REQUEST[${options.method}] => PATH: ${options.path}');
     // access 토큰 자동 적용
     // TODO: true 일때 따로 없을꺼라 if문 지워야함
-    if (options.headers['accessToken'] == true) {
+    if (options.headers['accessToken'] == 'true') {
       options.headers.remove('accessToken');
     }
     final accessToken = await secureStorage.read(key: ACCESS_TOKEN_KEY);
@@ -46,7 +46,7 @@ class CustomInterceptor extends Interceptor {
     }
 
     // refresh 토큰 자동 적용
-    if (options.headers['refreshToken'] == true) {
+    if (options.headers['refreshToken'] == 'true') {
       options.headers.remove('refreshToken');
     }
     final refreshToken = await secureStorage.read(key: REFRESH_TOKEN_KEY);

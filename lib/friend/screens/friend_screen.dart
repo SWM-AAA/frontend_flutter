@@ -5,6 +5,8 @@ import 'package:frontend/common/layouts/default_layout.dart';
 import 'package:frontend/common/provider/register_dialog_screen.dart';
 import 'package:frontend/friend/model/friend_model.dart';
 import 'package:frontend/friend/model/friend_request_model.dart';
+import 'package:frontend/friend/provider/friend_list_provider.dart';
+import 'package:frontend/friend/provider/future_friend_provider.dart';
 import 'package:frontend/friend/repository/friend_repository.dart';
 import 'package:frontend/friend/screens/request_screen.dart';
 import 'package:frontend/friend/screens/search_screen.dart';
@@ -29,18 +31,15 @@ class _RequestScreenState extends ConsumerState<FriendScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    requests = ref.read(friendRepositoryProvider).getFriendList();
   }
 
-  refetch() {
-    setState(() {
-      requests = ref.read(friendRepositoryProvider).getFriendList();
-    });
+  refetch() async {
+    await ref.read(friendListProvider.notifier).getFriendList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final repository = ref.watch(friendRepositoryProvider);
+    final state = ref.watch(friendListProvider);
 
     return DefaultLayout(
       child: SafeArea(
@@ -101,31 +100,50 @@ class _RequestScreenState extends ConsumerState<FriendScreen> {
                 ),
 
                 Expanded(
-                  child: FutureBuilder(
-                      future: requests,
-                      builder: (context, snapshot) {
-                        print(snapshot.data);
-                        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                          return SingleChildScrollView(
+                    child: state.isEmpty
+                        ? const Center(
+                            child: Text('친구가 없습니다.',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                )))
+                        : SingleChildScrollView(
                             child: Column(
                               children: [
-                                for (var data in snapshot.data!)
+                                for (var friend in state)
                                   FriendList(
-                                    id: data.userId,
-                                    name: data.nickname,
-                                    nameTag: data.userTag,
-                                    imageUrl: data.imageUrl,
-                                  ),
+                                    id: friend.userId,
+                                    name: friend.nickname,
+                                    nameTag: friend.userTag,
+                                    imageUrl: friend.imageUrl,
+                                  )
                               ],
                             ),
-                          );
-                        } else {
-                          return const Center(
-                            child: Text('친구가 없습니다.'),
-                          );
-                        }
-                      }),
-                )
+                          )
+                    // child: FutureBuilder(
+                    //     future: requests,
+                    //     builder: (context, snapshot) {
+                    //       print(snapshot.data);
+                    //       if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                    //         return SingleChildScrollView(
+                    //           child: Column(
+                    //             children: [
+                    //               for (var data in snapshot.data!)
+                    //                 FriendList(
+                    //                   id: data.userId,
+                    //                   name: data.nickname,
+                    //                   nameTag: data.userTag,
+                    //                   imageUrl: data.imageUrl,
+                    //                 ),
+                    //             ],
+                    //           ),
+                    //         );
+                    //       } else {
+                    //         return const Center(
+                    //           child: Text('친구가 없습니다.'),
+                    //         );
+                    //       }
+                    //     }),
+                    )
                 // Expanded(
                 //   child: result == null
                 //       ? isFirst == true

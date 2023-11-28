@@ -10,6 +10,7 @@ class FriendResponseModel {
     required this.userId,
     required this.accept,
   });
-  factory FriendResponseModel.fromJson(Map<String, dynamic> json) => _$FriendResponseModelFromJson(json);
+  factory FriendResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$FriendResponseModelFromJson(json);
   Map<String, dynamic> toJson() => _$FriendResponseModelToJson(this);
 }

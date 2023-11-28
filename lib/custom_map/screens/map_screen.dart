@@ -52,7 +52,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   @override
   void initState() {
     super.initState();
-    createMyMarker();
     createFriendMarker();
     currentLocation = getCurrentIfPossible();
     locationSettings = const LocationSettings(
@@ -64,6 +63,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         .listen((Position position) {
       updateMapCameraPosition(position);
       postMyLocation(position);
+      createMyMarker(position);
     });
   }
 
@@ -75,7 +75,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     super.dispose();
   }
 
-  Future<void> createMyMarker() async {
+  Future<void> createMyMarker(Position position) async {
     final secureStorage = ref.read(secureStorageProvider);
     final userMarkerId =
         await secureStorage.read(key: USER_ID); // TODO: 서버에서 내 정보 받아야함.
@@ -90,9 +90,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       userTag: userTag!,
       imageUrl: userProfileImagePath,
     );
-    print(userName);
     Marker userMarker =
-        await _initRandomLocationMarker(markerInfo, ImageType.Directory);
+        await _initLocationMarker(markerInfo, ImageType.Directory, position);
     setState(() {
       markers.add(userMarker);
     });
@@ -137,6 +136,25 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         imageUrl: userMarkerInfo.imageUrl,
       ),
       LatLng(37.540853 + moveLat, 127.078971 + moveLng),
+      imageType,
+    );
+    return thisMarker;
+  }
+
+  Future<Marker> _initLocationMarker(StaticInfoModel userMarkerInfo,
+      ImageType imageType, Position position) async {
+    // -0.01 ~ 0.01 사이의 랜덤 변위값 생성
+    double moveLat = (Random().nextInt(21) - 10) / 1000;
+    double moveLng = (Random().nextInt(21) - 10) / 1000;
+
+    Marker thisMarker = await googleUserMarker(
+      StaticInfoModel(
+        userId: userMarkerInfo.userId,
+        nickname: userMarkerInfo.nickname,
+        userTag: userMarkerInfo.userTag,
+        imageUrl: userMarkerInfo.imageUrl,
+      ),
+      LatLng(position.latitude, position.longitude),
       imageType,
     );
     return thisMarker;

@@ -20,7 +20,7 @@ abstract class LiveInfoRepository {
   // base:
   factory LiveInfoRepository(Dio dio, {String baseUrl}) = _LiveInfoRepository;
 
-  @GET('/api/v1/users/all-user-location-and-battery')
+  @GET('/api/v1/users/friend-location-and-battery')
   Future<FriendLocationAndBattery> getFriendLocationAndBattery();
   // @GET('/api/test/users/all-user-information')
   // Future<FriendNameAndImage> getUserInfomation();

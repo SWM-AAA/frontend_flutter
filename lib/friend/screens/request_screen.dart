@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:frontend/common/consts/data.dart';
 import 'package:frontend/common/layouts/default_layout.dart';
 import 'package:frontend/common/provider/register_dialog_screen.dart';
+import 'package:frontend/common/secure_storage/secure_storage.dart';
 import 'package:frontend/friend/model/friend_request_model.dart';
 import 'package:frontend/friend/repository/friend_repository.dart';
 import 'package:frontend/friend/screens/search_screen.dart';
@@ -34,9 +37,16 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
     });
   }
 
+  Future<String> getUserTag(FlutterSecureStorage secureStorage) async {
+    final userTag = await secureStorage.read(key: USER_TAG);
+    print(userTag);
+    return userTag ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     final userInfo = ref.watch(registeredUserInfoProvider).userName;
+    final secureStorage = ref.watch(secureStorageProvider);
 
     return DefaultLayout(
       child: SafeArea(
@@ -138,18 +148,22 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
                           //   name: '흔들어서 추가',
                           //   clickHandler: () {},
                           // ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                '내 유저 태그: $userInfo',
-                                style: const TextStyle(
-                                    fontSize: 16,
-                                    fontFamily: 'Pretendard',
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
+                          FutureBuilder<String>(
+                              future: getUserTag(secureStorage),
+                              builder: (context, snapshot) {
+                                return Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '내 유저 태그: ${snapshot.data}',
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontFamily: 'Pretendard',
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                );
+                              }),
                           const SizedBox(
                             height: 10,
                           ),
@@ -189,86 +203,6 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Future<FriendRequestListModel> testGetFriendRequestList() async {
-    final friendRequestList = [
-      FriendRequestModel(
-        userId: 1,
-        nickname: '김모미',
-        userTag: '김모미#0001',
-        imageUrl: 'https://picsum.photos/200',
-      ),
-      FriendRequestModel(
-        userId: 2,
-        nickname: '나모미',
-        userTag: '나모미#0002',
-        imageUrl: 'https://picsum.photos/200',
-      ),
-      FriendRequestModel(
-        userId: 3,
-        nickname: '다모미',
-        userTag: '다모미#0003',
-        imageUrl: 'https://picsum.photos/200',
-      ),
-      FriendRequestModel(
-        userId: 4,
-        nickname: '라모미',
-        userTag: '라모미#0004',
-        imageUrl: 'https://picsum.photos/200',
-      ),
-      FriendRequestModel(
-        userId: 5,
-        nickname: '마모미',
-        userTag: '마모미#0005',
-        imageUrl: 'https://picsum.photos/200',
-      ),
-      FriendRequestModel(
-        userId: 5,
-        nickname: '마모미',
-        userTag: '마모미#0005',
-        imageUrl: 'https://picsum.photos/200',
-      ),
-      FriendRequestModel(
-        userId: 5,
-        nickname: '마모미',
-        userTag: '마모미#0005',
-        imageUrl: 'https://picsum.photos/200',
-      ),
-      FriendRequestModel(
-        userId: 5,
-        nickname: '마모미',
-        userTag: '마모미#0005',
-        imageUrl: 'https://picsum.photos/200',
-      ),
-      FriendRequestModel(
-        userId: 5,
-        nickname: '마모미',
-        userTag: '마모미#0005',
-        imageUrl: 'https://picsum.photos/200',
-      ),
-      FriendRequestModel(
-        userId: 5,
-        nickname: '마모미',
-        userTag: '마모미#0005',
-        imageUrl: 'https://picsum.photos/200',
-      ),
-      FriendRequestModel(
-        userId: 5,
-        nickname: '마모미',
-        userTag: '마모미#0005',
-        imageUrl: 'https://picsum.photos/200',
-      ),
-      FriendRequestModel(
-        userId: 5,
-        nickname: '마모미',
-        userTag: '마모미#0005',
-        imageUrl: 'https://picsum.photos/200',
-      ),
-    ];
-    return FriendRequestListModel(
-      friendRequestList: friendRequestList,
     );
   }
 }
